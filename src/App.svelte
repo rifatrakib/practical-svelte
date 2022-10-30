@@ -42,4 +42,4 @@
 	userName="{name}"
 	jobTitle="{title}"
 	userImage="{image}"
-	description="{description}" />
+	{description} />
