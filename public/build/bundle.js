@@ -659,11 +659,12 @@ var app = (function () {
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
     	child_ctx[11] = list[i];
+    	child_ctx[13] = i;
     	return child_ctx;
     }
 
     // (62:0) {:else}
-    function create_else_block(ctx) {
+    function create_else_block_1(ctx) {
     	let p;
 
     	const block = {
@@ -682,7 +683,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block.name,
+    		id: create_else_block_1.name,
     		type: "else",
     		source: "(62:0) {:else}",
     		ctx
@@ -720,8 +721,43 @@ var app = (function () {
     	return block;
     }
 
-    // (66:0) {#each createdContacts as createdContact}
+    // (73:0) {:else}
+    function create_else_block(ctx) {
+    	let p;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			p.textContent = "Please start adding some contacts, we found none!";
+    			add_location(p, file, 73, 1, 1633);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(73:0) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (66:0) {#each createdContacts as createdContact, index}
     function create_each_block(ctx) {
+    	let h2;
+    	let t0;
+    	let t1_value = /*index*/ ctx[13] + 1 + "";
+    	let t1;
+    	let t2;
     	let contactcard;
     	let current;
 
@@ -737,9 +773,18 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			h2 = element("h2");
+    			t0 = text("# ");
+    			t1 = text(t1_value);
+    			t2 = space();
     			create_component(contactcard.$$.fragment);
+    			add_location(h2, file, 66, 1, 1432);
     		},
     		m: function mount(target, anchor) {
+    			insert_dev(target, h2, anchor);
+    			append_dev(h2, t0);
+    			append_dev(h2, t1);
+    			insert_dev(target, t2, anchor);
     			mount_component(contactcard, target, anchor);
     			current = true;
     		},
@@ -761,6 +806,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
+    			if (detaching) detach_dev(h2);
+    			if (detaching) detach_dev(t2);
     			destroy_component(contactcard, detaching);
     		}
     	};
@@ -769,7 +816,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(66:0) {#each createdContacts as createdContact}",
+    		source: "(66:0) {#each createdContacts as createdContact, index}",
     		ctx
     	});
 
@@ -808,7 +855,7 @@ var app = (function () {
 
     	function select_block_type(ctx, dirty) {
     		if (/*formState*/ ctx[4] === "invalid") return create_if_block;
-    		return create_else_block;
+    		return create_else_block_1;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -824,6 +871,12 @@ var app = (function () {
     	const out = i => transition_out(each_blocks[i], 1, 1, () => {
     		each_blocks[i] = null;
     	});
+
+    	let each_1_else = null;
+
+    	if (!each_value.length) {
+    		each_1_else = create_else_block(ctx);
+    	}
 
     	const block = {
     		c: function create() {
@@ -863,6 +916,11 @@ var app = (function () {
     			}
 
     			each_1_anchor = empty();
+
+    			if (each_1_else) {
+    				each_1_else.c();
+    			}
+
     			attr_dev(label0, "for", "userName");
     			add_location(label0, file, 40, 2, 690);
     			attr_dev(input0, "type", "text");
@@ -935,6 +993,11 @@ var app = (function () {
     			}
 
     			insert_dev(target, each_1_anchor, anchor);
+
+    			if (each_1_else) {
+    				each_1_else.m(target, anchor);
+    			}
+
     			current = true;
 
     			if (!mounted) {
@@ -1002,6 +1065,17 @@ var app = (function () {
     				}
 
     				check_outros();
+
+    				if (!each_value.length && each_1_else) {
+    					each_1_else.p(ctx, dirty);
+    				} else if (!each_value.length) {
+    					each_1_else = create_else_block(ctx);
+    					each_1_else.c();
+    					each_1_else.m(each_1_anchor.parentNode, each_1_anchor);
+    				} else if (each_1_else) {
+    					each_1_else.d(1);
+    					each_1_else = null;
+    				}
     			}
     		},
     		i: function intro(local) {
@@ -1031,6 +1105,7 @@ var app = (function () {
     			if (detaching) detach_dev(t14);
     			destroy_each(each_blocks, detaching);
     			if (detaching) detach_dev(each_1_anchor);
+    			if (each_1_else) each_1_else.d(detaching);
     			mounted = false;
     			run_all(dispose);
     		}
