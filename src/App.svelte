@@ -5,41 +5,32 @@
 	let title = "";
 	let image = "";
 	let description = "";
-	let age = 27;
-
-	$: uppercaseName = name.toUpperCase();
-
-	$: console.log(name);
-
-	$: if (name === "Muhammad Abdur Rakib") {
-		age = 30;
-	}
-
-	function incrementAge() {
-		age += 1;
-	}
-
-	function changeName(event) {
-		const enteredValue = event.target.value;
-		name = enteredValue;
-	}
 </script>
 
 <style>
-	h1 {
-		color: purple;
+	#form {
+		width: 30rem;
+		max-width: 100%;
 	}
 </style>
 
-<h1>Hello {uppercaseName}! My age is {age} years.</h1>
-<button on:click="{incrementAge}">Change Age</button>
-<input type="text" bind:value="{name}" />
-<input type="text" bind:value="{title}" />
-<input type="text" bind:value="{image}" />
-<textarea rows="3" bind:value="{description}"></textarea>
+<div id="form">
+	<div class="form-control">
+		<label for="userName">User Name</label>
+		<input type="text" bind:value={name} id="userName" />
+	</div>
+	<div class="form-control">
+		<label for="jobTitle">Job Title</label>
+		<input type="text" bind:value={title} id="jobTitle" />
+	</div>
+	<div class="form-control">
+		<label for="image">Image URL</label>
+		<input type="text" bind:value={image} id="image" />
+	</div>
+	<div class="form-control">
+		<label for="desc">Description</label>
+		<textarea rows="3" bind:value={description} id="desc" />
+	</div>
+</div>
 
-<ContactCard 
-	userName="{name}"
-	jobTitle="{title}"
-	userImage="{image}"
-	{description} />
+<ContactCard userName={name} jobTitle={title} {description} userImage={image} />
