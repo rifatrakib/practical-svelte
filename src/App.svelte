@@ -21,11 +21,20 @@
 		}
 		formState = "done";
 		createdContacts = [...createdContacts, {
+			id: `identifier-${createdContacts.length}`,
 			name: name,
 			jobTitle: title,
 			imageUrl: image,
 			description: description,
 		}];
+	}
+
+	function deleteFirst() {
+		createdContacts = createdContacts.slice(1);
+	}
+
+	function deleteLast() {
+		createdContacts = createdContacts.slice(0, -1);
 	}
 </script>
 
@@ -56,6 +65,8 @@
 </div>
 
 <button on:click="{addContactCard}">Add Contact Card</button>
+<button on:click="{deleteFirst}">Delete First</button>
+<button on:click="{deleteLast}">Delete Last</button>
 
 {#if formState === "invalid"}
 	<p>Invalid Input</p>
@@ -63,7 +74,7 @@
 	<p>Please enter some data and hit the button!</p>
 {/if}
 
-{#each createdContacts as createdContact, index}
+{#each createdContacts as createdContact, index (createdContact.id)}
 	<h2># {index + 1}</h2>
 	<ContactCard 
 		userName={createdContact.name}
