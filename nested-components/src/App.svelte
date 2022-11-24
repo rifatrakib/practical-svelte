@@ -11,6 +11,7 @@
     ];
 
     let showModal = false;
+    let closeable = false;
 
     function addToCart(event) {
         console.log(event.detail);
@@ -31,9 +32,12 @@
 <button on:click="{() => showModal = true}">Show Modal</button>
 
 {#if showModal}
-    <Modal on:cancel="{() => (showModal = false)}" on:close="{() => (showModal = false)}">
+    <Modal
+    on:cancel="{() => (showModal = false)}"
+    on:close="{() => (showModal = false)}"
+    let:didAgree={closeable}>
         <h1 slot="header">Hello!</h1>
         <p>Using Slots!!!</p>
-        <button slot="footer" on:click="{() => (showModal = false)}">Confirm</button>
+        <button slot="footer" on:click="{() => (showModal = false)}" disabled={!closeable}>Confirm</button>
     </Modal>
 {/if}
