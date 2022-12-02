@@ -20,15 +20,17 @@
             "imageUrl": "https://static.dnls.nl/home/5/60P9A7yn96sltKNLXJKFed/all-event-venues-of-london.jpg",
             "address": "221B Baker St, London",
             "contactEmail": "code@test.com",
+            "isFavorite": false,
         },
         {
-            "id": "m1",
+            "id": "m2",
             "title": "Swim Together",
             "subtitle": "Let's learn how to swim",
             "description": "Having fun while teaching and swimming",
             "imageUrl": "https://static.dnls.nl/home/5/60P9A7yn96sltKNLXJKFed/all-event-venues-of-london.jpg",
             "address": "221B Baker St, London",
             "contactEmail": "swim@test.com",
+            "isFavorite": false,
         },
     ];
 
@@ -44,6 +46,16 @@
         };
 
         meetUps = [newMeetUp, ...meetUps];
+    }
+
+    function toggleFavorite(event) {
+        const id = event.detail;
+        const updatedMeetUp = {...meetUps.find(m => m.id === id)};
+        updatedMeetUp.isFavorite = !updatedMeetUp.isFavorite;
+        const meetUpIndex = meetUps.findIndex(m => m.id === id);
+        const updatedMeetUps = [...meetUps];
+        updatedMeetUps[meetUpIndex] = updatedMeetUp;
+        meetUps = updatedMeetUps;
     }
 </script>
 
@@ -103,5 +115,5 @@
         
         <Button type="submit" caption="Save" />
     </form>
-    <MeetUpGrid meetUps={meetUps} />
+    <MeetUpGrid meetUps={meetUps} on:togglefavorite="{toggleFavorite}" />
 </main>
