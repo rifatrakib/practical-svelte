@@ -9,6 +9,8 @@
     let favColors = ["red"];
     let favColor = "red";
     let dropdownFavColor = "red";
+    let usernameInput;
+    let someDiv;
 
     $: console.log(val);
     $: console.log(selectedOption);
@@ -20,6 +22,12 @@
 
     function setValue(event) {
         val = event.target.value;
+    }
+
+    function saveData() {
+        console.log(usernameInput.value);
+        console.dir(usernameInput);
+        console.dir(someDiv);
     }
 </script>
 
@@ -68,3 +76,10 @@
     <option value="red">Red</option>
     <option value="blue">Blue</option>
 </select>
+
+<hr />
+
+<input type="text" bind:this="{usernameInput}" />
+<button on:click="{saveData}">Save</button>
+
+<div bind:this="{someDiv}"></div>
