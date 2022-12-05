@@ -441,7 +441,7 @@ var app = (function () {
     		c: function create() {
     			input = element("input");
     			attr_dev(input, "type", "text");
-    			add_location(input, file$2, 4, 0, 44);
+    			add_location(input, file$2, 8, 0, 103);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -451,7 +451,7 @@ var app = (function () {
     			set_input_value(input, /*val*/ ctx[0]);
 
     			if (!mounted) {
-    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[1]);
+    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[2]);
     				mounted = true;
     			}
     		},
@@ -485,6 +485,10 @@ var app = (function () {
     	validate_slots('CustomInput', slots, []);
     	let { val } = $$props;
 
+    	function empty() {
+    		$$invalidate(0, val = "");
+    	}
+
     	$$self.$$.on_mount.push(function () {
     		if (val === undefined && !('val' in $$props || $$self.$$.bound[$$self.$$.props['val']])) {
     			console.warn("<CustomInput> was created without expected prop 'val'");
@@ -506,7 +510,7 @@ var app = (function () {
     		if ('val' in $$props) $$invalidate(0, val = $$props.val);
     	};
 
-    	$$self.$capture_state = () => ({ val });
+    	$$self.$capture_state = () => ({ val, empty });
 
     	$$self.$inject_state = $$props => {
     		if ('val' in $$props) $$invalidate(0, val = $$props.val);
@@ -516,13 +520,13 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [val, input_input_handler];
+    	return [val, empty, input_input_handler];
     }
 
     class CustomInput extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { val: 0 });
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { val: 0, empty: 1 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -537,6 +541,14 @@ var app = (function () {
     	}
 
     	set val(value) {
+    		throw new Error("<CustomInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get empty() {
+    		return this.$$.ctx[1];
+    	}
+
+    	set empty(value) {
     		throw new Error("<CustomInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -733,7 +745,7 @@ var app = (function () {
     	let dispose;
 
     	function custominput_val_binding(value) {
-    		/*custominput_val_binding*/ ctx[10](value);
+    		/*custominput_val_binding*/ ctx[11](value);
     	}
 
     	let custominput_props = {};
@@ -744,9 +756,10 @@ var app = (function () {
 
     	custominput = new CustomInput({ props: custominput_props, $$inline: true });
     	binding_callbacks.push(() => bind(custominput, 'val', custominput_val_binding));
+    	/*custominput_binding*/ ctx[12](custominput);
 
     	function toggle_chosenOption_binding(value) {
-    		/*toggle_chosenOption_binding*/ ctx[11](value);
+    		/*toggle_chosenOption_binding*/ ctx[13](value);
     	}
 
     	let toggle_props = {};
@@ -817,70 +830,70 @@ var app = (function () {
     			t28 = space();
     			div = element("div");
     			attr_dev(input0, "type", "number");
-    			add_location(input0, file, 38, 0, 950);
+    			add_location(input0, file, 41, 0, 1051);
     			attr_dev(input1, "type", "checkbox");
-    			add_location(input1, file, 41, 4, 1006);
-    			add_location(label0, file, 40, 0, 994);
-    			add_location(h10, file, 45, 0, 1084);
+    			add_location(input1, file, 44, 4, 1107);
+    			add_location(label0, file, 43, 0, 1095);
+    			add_location(h10, file, 48, 0, 1185);
     			attr_dev(input2, "type", "checkbox");
     			attr_dev(input2, "name", "color");
     			input2.__value = "red";
     			input2.value = input2.__value;
-    			/*$$binding_groups*/ ctx[15][0].push(input2);
-    			add_location(input2, file, 47, 4, 1122);
-    			add_location(label1, file, 46, 0, 1110);
+    			/*$$binding_groups*/ ctx[17][0].push(input2);
+    			add_location(input2, file, 50, 4, 1223);
+    			add_location(label1, file, 49, 0, 1211);
     			attr_dev(input3, "type", "checkbox");
     			attr_dev(input3, "name", "color");
     			input3.__value = "green";
     			input3.value = input3.__value;
-    			/*$$binding_groups*/ ctx[15][0].push(input3);
-    			add_location(input3, file, 51, 4, 1225);
-    			add_location(label2, file, 50, 0, 1213);
+    			/*$$binding_groups*/ ctx[17][0].push(input3);
+    			add_location(input3, file, 54, 4, 1326);
+    			add_location(label2, file, 53, 0, 1314);
     			attr_dev(input4, "type", "checkbox");
     			attr_dev(input4, "name", "color");
     			input4.__value = "blue";
     			input4.value = input4.__value;
-    			/*$$binding_groups*/ ctx[15][0].push(input4);
-    			add_location(input4, file, 55, 4, 1332);
-    			add_location(label3, file, 54, 0, 1320);
-    			add_location(h11, file, 59, 0, 1426);
+    			/*$$binding_groups*/ ctx[17][0].push(input4);
+    			add_location(input4, file, 58, 4, 1433);
+    			add_location(label3, file, 57, 0, 1421);
+    			add_location(h11, file, 62, 0, 1527);
     			attr_dev(input5, "type", "radio");
     			attr_dev(input5, "name", "color");
     			input5.__value = "red";
     			input5.value = input5.__value;
-    			/*$$binding_groups*/ ctx[15][1].push(input5);
-    			add_location(input5, file, 61, 4, 1463);
-    			add_location(label4, file, 60, 0, 1451);
+    			/*$$binding_groups*/ ctx[17][1].push(input5);
+    			add_location(input5, file, 64, 4, 1564);
+    			add_location(label4, file, 63, 0, 1552);
     			attr_dev(input6, "type", "radio");
     			attr_dev(input6, "name", "color");
     			input6.__value = "green";
     			input6.value = input6.__value;
-    			/*$$binding_groups*/ ctx[15][1].push(input6);
-    			add_location(input6, file, 65, 4, 1562);
-    			add_location(label5, file, 64, 0, 1550);
+    			/*$$binding_groups*/ ctx[17][1].push(input6);
+    			add_location(input6, file, 68, 4, 1663);
+    			add_location(label5, file, 67, 0, 1651);
     			attr_dev(input7, "type", "radio");
     			attr_dev(input7, "name", "color");
     			input7.__value = "blue";
     			input7.value = input7.__value;
-    			/*$$binding_groups*/ ctx[15][1].push(input7);
-    			add_location(input7, file, 69, 4, 1665);
-    			add_location(label6, file, 68, 0, 1653);
+    			/*$$binding_groups*/ ctx[17][1].push(input7);
+    			add_location(input7, file, 72, 4, 1766);
+    			add_location(label6, file, 71, 0, 1754);
     			option0.__value = "green";
     			option0.value = option0.__value;
-    			add_location(option0, file, 74, 4, 1798);
+    			add_location(option0, file, 77, 4, 1899);
     			option1.__value = "red";
     			option1.value = option1.__value;
-    			add_location(option1, file, 75, 4, 1839);
+    			add_location(option1, file, 78, 4, 1940);
     			option2.__value = "blue";
     			option2.value = option2.__value;
-    			add_location(option2, file, 76, 4, 1876);
-    			if (/*dropdownFavColor*/ ctx[6] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[21].call(select));
-    			add_location(select, file, 73, 0, 1755);
-    			add_location(hr, file, 79, 0, 1922);
+    			add_location(option2, file, 79, 4, 1977);
+    			if (/*dropdownFavColor*/ ctx[6] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[23].call(select));
+    			add_location(select, file, 76, 0, 1856);
+    			add_location(hr, file, 82, 0, 2023);
     			attr_dev(input8, "type", "text");
-    			add_location(input8, file, 81, 0, 1930);
-    			add_location(button, file, 82, 0, 1980);
-    			add_location(div, file, 84, 0, 2025);
+    			add_location(input8, file, 84, 0, 2031);
+    			add_location(button, file, 85, 0, 2081);
+    			add_location(div, file, 87, 0, 2126);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -941,26 +954,26 @@ var app = (function () {
     			insert_dev(target, hr, anchor);
     			insert_dev(target, t25, anchor);
     			insert_dev(target, input8, anchor);
-    			/*input8_binding*/ ctx[22](input8);
+    			/*input8_binding*/ ctx[24](input8);
     			insert_dev(target, t26, anchor);
     			insert_dev(target, button, anchor);
     			insert_dev(target, t28, anchor);
     			insert_dev(target, div, anchor);
-    			/*div_binding*/ ctx[23](div);
+    			/*div_binding*/ ctx[25](div);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[12]),
-    					listen_dev(input1, "change", /*input1_change_handler*/ ctx[13]),
-    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[14]),
-    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[16]),
-    					listen_dev(input4, "change", /*input4_change_handler*/ ctx[17]),
-    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[18]),
-    					listen_dev(input6, "change", /*input6_change_handler*/ ctx[19]),
-    					listen_dev(input7, "change", /*input7_change_handler*/ ctx[20]),
-    					listen_dev(select, "change", /*select_change_handler*/ ctx[21]),
-    					listen_dev(button, "click", /*saveData*/ ctx[9], false, false, false)
+    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[14]),
+    					listen_dev(input1, "change", /*input1_change_handler*/ ctx[15]),
+    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[16]),
+    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[18]),
+    					listen_dev(input4, "change", /*input4_change_handler*/ ctx[19]),
+    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[20]),
+    					listen_dev(input6, "change", /*input6_change_handler*/ ctx[21]),
+    					listen_dev(input7, "change", /*input7_change_handler*/ ctx[22]),
+    					listen_dev(select, "change", /*select_change_handler*/ ctx[23]),
+    					listen_dev(button, "click", /*saveData*/ ctx[10], false, false, false)
     				];
 
     				mounted = true;
@@ -1034,6 +1047,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
+    			/*custominput_binding*/ ctx[12](null);
     			destroy_component(custominput, detaching);
     			if (detaching) detach_dev(t0);
     			destroy_component(toggle, detaching);
@@ -1045,36 +1059,36 @@ var app = (function () {
     			if (detaching) detach_dev(h10);
     			if (detaching) detach_dev(t6);
     			if (detaching) detach_dev(label1);
-    			/*$$binding_groups*/ ctx[15][0].splice(/*$$binding_groups*/ ctx[15][0].indexOf(input2), 1);
+    			/*$$binding_groups*/ ctx[17][0].splice(/*$$binding_groups*/ ctx[17][0].indexOf(input2), 1);
     			if (detaching) detach_dev(t8);
     			if (detaching) detach_dev(label2);
-    			/*$$binding_groups*/ ctx[15][0].splice(/*$$binding_groups*/ ctx[15][0].indexOf(input3), 1);
+    			/*$$binding_groups*/ ctx[17][0].splice(/*$$binding_groups*/ ctx[17][0].indexOf(input3), 1);
     			if (detaching) detach_dev(t10);
     			if (detaching) detach_dev(label3);
-    			/*$$binding_groups*/ ctx[15][0].splice(/*$$binding_groups*/ ctx[15][0].indexOf(input4), 1);
+    			/*$$binding_groups*/ ctx[17][0].splice(/*$$binding_groups*/ ctx[17][0].indexOf(input4), 1);
     			if (detaching) detach_dev(t12);
     			if (detaching) detach_dev(h11);
     			if (detaching) detach_dev(t14);
     			if (detaching) detach_dev(label4);
-    			/*$$binding_groups*/ ctx[15][1].splice(/*$$binding_groups*/ ctx[15][1].indexOf(input5), 1);
+    			/*$$binding_groups*/ ctx[17][1].splice(/*$$binding_groups*/ ctx[17][1].indexOf(input5), 1);
     			if (detaching) detach_dev(t16);
     			if (detaching) detach_dev(label5);
-    			/*$$binding_groups*/ ctx[15][1].splice(/*$$binding_groups*/ ctx[15][1].indexOf(input6), 1);
+    			/*$$binding_groups*/ ctx[17][1].splice(/*$$binding_groups*/ ctx[17][1].indexOf(input6), 1);
     			if (detaching) detach_dev(t18);
     			if (detaching) detach_dev(label6);
-    			/*$$binding_groups*/ ctx[15][1].splice(/*$$binding_groups*/ ctx[15][1].indexOf(input7), 1);
+    			/*$$binding_groups*/ ctx[17][1].splice(/*$$binding_groups*/ ctx[17][1].indexOf(input7), 1);
     			if (detaching) detach_dev(t20);
     			if (detaching) detach_dev(select);
     			if (detaching) detach_dev(t24);
     			if (detaching) detach_dev(hr);
     			if (detaching) detach_dev(t25);
     			if (detaching) detach_dev(input8);
-    			/*input8_binding*/ ctx[22](null);
+    			/*input8_binding*/ ctx[24](null);
     			if (detaching) detach_dev(t26);
     			if (detaching) detach_dev(button);
     			if (detaching) detach_dev(t28);
     			if (detaching) detach_dev(div);
-    			/*div_binding*/ ctx[23](null);
+    			/*div_binding*/ ctx[25](null);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -1103,6 +1117,7 @@ var app = (function () {
     	let dropdownFavColor = "red";
     	let usernameInput;
     	let someDiv;
+    	let customInput;
 
     	function setValue(event) {
     		$$invalidate(0, val = event.target.value);
@@ -1112,6 +1127,7 @@ var app = (function () {
     		console.log(usernameInput.value);
     		console.dir(usernameInput);
     		console.dir(someDiv);
+    		customInput.empty();
     	}
 
     	const writable_props = [];
@@ -1125,6 +1141,13 @@ var app = (function () {
     	function custominput_val_binding(value) {
     		val = value;
     		$$invalidate(0, val);
+    	}
+
+    	function custominput_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			customInput = $$value;
+    			$$invalidate(7, customInput);
+    		});
     	}
 
     	function toggle_chosenOption_binding(value) {
@@ -1180,14 +1203,14 @@ var app = (function () {
     	function input8_binding($$value) {
     		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
     			usernameInput = $$value;
-    			$$invalidate(7, usernameInput);
+    			$$invalidate(8, usernameInput);
     		});
     	}
 
     	function div_binding($$value) {
     		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
     			someDiv = $$value;
-    			$$invalidate(8, someDiv);
+    			$$invalidate(9, someDiv);
     		});
     	}
 
@@ -1203,6 +1226,7 @@ var app = (function () {
     		dropdownFavColor,
     		usernameInput,
     		someDiv,
+    		customInput,
     		setValue,
     		saveData
     	});
@@ -1215,8 +1239,9 @@ var app = (function () {
     		if ('favColors' in $$props) $$invalidate(4, favColors = $$props.favColors);
     		if ('favColor' in $$props) $$invalidate(5, favColor = $$props.favColor);
     		if ('dropdownFavColor' in $$props) $$invalidate(6, dropdownFavColor = $$props.dropdownFavColor);
-    		if ('usernameInput' in $$props) $$invalidate(7, usernameInput = $$props.usernameInput);
-    		if ('someDiv' in $$props) $$invalidate(8, someDiv = $$props.someDiv);
+    		if ('usernameInput' in $$props) $$invalidate(8, usernameInput = $$props.usernameInput);
+    		if ('someDiv' in $$props) $$invalidate(9, someDiv = $$props.someDiv);
+    		if ('customInput' in $$props) $$invalidate(7, customInput = $$props.customInput);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -1251,6 +1276,10 @@ var app = (function () {
     		if ($$self.$$.dirty & /*dropdownFavColor*/ 64) {
     			console.log(dropdownFavColor);
     		}
+
+    		if ($$self.$$.dirty & /*customInput*/ 128) {
+    			console.log(customInput);
+    		}
     	};
 
     	return [
@@ -1261,10 +1290,12 @@ var app = (function () {
     		favColors,
     		favColor,
     		dropdownFavColor,
+    		customInput,
     		usernameInput,
     		someDiv,
     		saveData,
     		custominput_val_binding,
+    		custominput_binding,
     		toggle_chosenOption_binding,
     		input0_input_handler,
     		input1_change_handler,

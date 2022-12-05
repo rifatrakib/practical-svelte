@@ -11,6 +11,7 @@
     let dropdownFavColor = "red";
     let usernameInput;
     let someDiv;
+    let customInput;
 
     $: console.log(val);
     $: console.log(selectedOption);
@@ -19,6 +20,7 @@
     $: console.log(favColors);
     $: console.log(favColor);
     $: console.log(dropdownFavColor);
+    $: console.log(customInput);
 
     function setValue(event) {
         val = event.target.value;
@@ -28,12 +30,13 @@
         console.log(usernameInput.value);
         console.dir(usernameInput);
         console.dir(someDiv);
+        customInput.empty();
     }
 </script>
 
 <!-- <input type="text" value="{val}" on:input="{setValue}" /> -->
 <!-- <input type="text" bind:value={val} /> -->
-<CustomInput bind:val={val} />
+<CustomInput bind:val bind:this={customInput} />
 <Toggle bind:chosenOption={selectedOption} />
 
 <input type="number" bind:value={price} />
