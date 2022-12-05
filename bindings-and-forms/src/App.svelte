@@ -1,6 +1,7 @@
 <script>
     import CustomInput from "./CustomInput.svelte";
     import Toggle from "./Toggle.svelte";
+    import { isValidEmail } from "./validation.js";
 
     let val = "Max";
     let selectedOption = 1;
@@ -12,6 +13,8 @@
     let usernameInput;
     let someDiv;
     let customInput;
+    let enteredEmail = "";
+    let formIsValid = false;
 
     $: console.log(val);
     $: console.log(selectedOption);
@@ -21,6 +24,12 @@
     $: console.log(favColor);
     $: console.log(dropdownFavColor);
     $: console.log(customInput);
+
+    $: if(isValidEmail(enteredEmail)) {
+        formIsValid = true;
+    } else {
+        formIsValid = false;
+    }
 
     function setValue(event) {
         val = event.target.value;
@@ -33,6 +42,12 @@
         customInput.empty();
     }
 </script>
+
+<style>
+    input.invalid {
+        border: 1px solid red;
+    }
+</style>
 
 <!-- <input type="text" value="{val}" on:input="{setValue}" /> -->
 <!-- <input type="text" bind:value={val} /> -->
@@ -86,3 +101,10 @@
 <button on:click="{saveData}">Save</button>
 
 <div bind:this="{someDiv}"></div>
+
+<hr />
+
+<form on:submit|preventDefault>
+    <input type="email" bind:value={enteredEmail} class="{isValidEmail(enteredEmail) ? '' : 'invalid'}" />
+    <button type="submit" disabled={!formIsValid}>Save</button>
+</form>
