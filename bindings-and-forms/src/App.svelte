@@ -8,6 +8,7 @@
     let agreed;
     let favColors = ["red"];
     let favColor = "red";
+    let dropdownFavColor = "red";
 
     $: console.log(val);
     $: console.log(selectedOption);
@@ -15,6 +16,7 @@
     $: console.log(agreed);
     $: console.log(favColors);
     $: console.log(favColor);
+    $: console.log(dropdownFavColor);
 
     function setValue(event) {
         val = event.target.value;
@@ -60,3 +62,9 @@
     <input type="radio" name="color" value="blue" bind:group={favColor} />
     Blue
 </label>
+
+<select bind:value={dropdownFavColor}>
+    <option value="green">Green</option>
+    <option value="red">Red</option>
+    <option value="blue">Blue</option>
+</select>

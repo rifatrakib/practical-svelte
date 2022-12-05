@@ -77,6 +77,20 @@ var app = (function () {
     function set_input_value(input, value) {
         input.value = value == null ? '' : value;
     }
+    function select_option(select, value) {
+        for (let i = 0; i < select.options.length; i += 1) {
+            const option = select.options[i];
+            if (option.__value === value) {
+                option.selected = true;
+                return;
+            }
+        }
+        select.selectedIndex = -1; // no option should be selected
+    }
+    function select_value(select) {
+        const selected_option = select.querySelector(':checked') || select.options[0];
+        return selected_option && selected_option.__value;
+    }
     function custom_event(type, detail, { bubbles = false, cancelable = false } = {}) {
         const e = document.createEvent('CustomEvent');
         e.initCustomEvent(type, bubbles, cancelable, detail);
@@ -701,12 +715,17 @@ var app = (function () {
     	let label6;
     	let input7;
     	let t19;
+    	let t20;
+    	let select;
+    	let option0;
+    	let option1;
+    	let option2;
     	let current;
     	let mounted;
     	let dispose;
 
     	function custominput_val_binding(value) {
-    		/*custominput_val_binding*/ ctx[6](value);
+    		/*custominput_val_binding*/ ctx[7](value);
     	}
 
     	let custominput_props = {};
@@ -719,7 +738,7 @@ var app = (function () {
     	binding_callbacks.push(() => bind(custominput, 'val', custominput_val_binding));
 
     	function toggle_chosenOption_binding(value) {
-    		/*toggle_chosenOption_binding*/ ctx[7](value);
+    		/*toggle_chosenOption_binding*/ ctx[8](value);
     	}
 
     	let toggle_props = {};
@@ -772,55 +791,74 @@ var app = (function () {
     			label6 = element("label");
     			input7 = element("input");
     			t19 = text("\n    Blue");
+    			t20 = space();
+    			select = element("select");
+    			option0 = element("option");
+    			option0.textContent = "Green";
+    			option1 = element("option");
+    			option1.textContent = "Red";
+    			option2 = element("option");
+    			option2.textContent = "Blue";
     			attr_dev(input0, "type", "number");
-    			add_location(input0, file, 28, 0, 697);
+    			add_location(input0, file, 30, 0, 769);
     			attr_dev(input1, "type", "checkbox");
-    			add_location(input1, file, 31, 4, 753);
-    			add_location(label0, file, 30, 0, 741);
-    			add_location(h10, file, 35, 0, 831);
+    			add_location(input1, file, 33, 4, 825);
+    			add_location(label0, file, 32, 0, 813);
+    			add_location(h10, file, 37, 0, 903);
     			attr_dev(input2, "type", "checkbox");
     			attr_dev(input2, "name", "color");
     			input2.__value = "red";
     			input2.value = input2.__value;
-    			/*$$binding_groups*/ ctx[11][0].push(input2);
-    			add_location(input2, file, 37, 4, 869);
-    			add_location(label1, file, 36, 0, 857);
+    			/*$$binding_groups*/ ctx[12][0].push(input2);
+    			add_location(input2, file, 39, 4, 941);
+    			add_location(label1, file, 38, 0, 929);
     			attr_dev(input3, "type", "checkbox");
     			attr_dev(input3, "name", "color");
     			input3.__value = "green";
     			input3.value = input3.__value;
-    			/*$$binding_groups*/ ctx[11][0].push(input3);
-    			add_location(input3, file, 41, 4, 972);
-    			add_location(label2, file, 40, 0, 960);
+    			/*$$binding_groups*/ ctx[12][0].push(input3);
+    			add_location(input3, file, 43, 4, 1044);
+    			add_location(label2, file, 42, 0, 1032);
     			attr_dev(input4, "type", "checkbox");
     			attr_dev(input4, "name", "color");
     			input4.__value = "blue";
     			input4.value = input4.__value;
-    			/*$$binding_groups*/ ctx[11][0].push(input4);
-    			add_location(input4, file, 45, 4, 1079);
-    			add_location(label3, file, 44, 0, 1067);
-    			add_location(h11, file, 49, 0, 1173);
+    			/*$$binding_groups*/ ctx[12][0].push(input4);
+    			add_location(input4, file, 47, 4, 1151);
+    			add_location(label3, file, 46, 0, 1139);
+    			add_location(h11, file, 51, 0, 1245);
     			attr_dev(input5, "type", "radio");
     			attr_dev(input5, "name", "color");
     			input5.__value = "red";
     			input5.value = input5.__value;
-    			/*$$binding_groups*/ ctx[11][1].push(input5);
-    			add_location(input5, file, 51, 4, 1210);
-    			add_location(label4, file, 50, 0, 1198);
+    			/*$$binding_groups*/ ctx[12][1].push(input5);
+    			add_location(input5, file, 53, 4, 1282);
+    			add_location(label4, file, 52, 0, 1270);
     			attr_dev(input6, "type", "radio");
     			attr_dev(input6, "name", "color");
     			input6.__value = "green";
     			input6.value = input6.__value;
-    			/*$$binding_groups*/ ctx[11][1].push(input6);
-    			add_location(input6, file, 55, 4, 1309);
-    			add_location(label5, file, 54, 0, 1297);
+    			/*$$binding_groups*/ ctx[12][1].push(input6);
+    			add_location(input6, file, 57, 4, 1381);
+    			add_location(label5, file, 56, 0, 1369);
     			attr_dev(input7, "type", "radio");
     			attr_dev(input7, "name", "color");
     			input7.__value = "blue";
     			input7.value = input7.__value;
-    			/*$$binding_groups*/ ctx[11][1].push(input7);
-    			add_location(input7, file, 59, 4, 1412);
-    			add_location(label6, file, 58, 0, 1400);
+    			/*$$binding_groups*/ ctx[12][1].push(input7);
+    			add_location(input7, file, 61, 4, 1484);
+    			add_location(label6, file, 60, 0, 1472);
+    			option0.__value = "green";
+    			option0.value = option0.__value;
+    			add_location(option0, file, 66, 4, 1617);
+    			option1.__value = "red";
+    			option1.value = option1.__value;
+    			add_location(option1, file, 67, 4, 1658);
+    			option2.__value = "blue";
+    			option2.value = option2.__value;
+    			add_location(option2, file, 68, 4, 1695);
+    			if (/*dropdownFavColor*/ ctx[6] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[18].call(select));
+    			add_location(select, file, 65, 0, 1574);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -871,18 +909,25 @@ var app = (function () {
     			append_dev(label6, input7);
     			input7.checked = input7.__value === /*favColor*/ ctx[5];
     			append_dev(label6, t19);
+    			insert_dev(target, t20, anchor);
+    			insert_dev(target, select, anchor);
+    			append_dev(select, option0);
+    			append_dev(select, option1);
+    			append_dev(select, option2);
+    			select_option(select, /*dropdownFavColor*/ ctx[6]);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[8]),
-    					listen_dev(input1, "change", /*input1_change_handler*/ ctx[9]),
-    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[10]),
-    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[12]),
-    					listen_dev(input4, "change", /*input4_change_handler*/ ctx[13]),
-    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[14]),
-    					listen_dev(input6, "change", /*input6_change_handler*/ ctx[15]),
-    					listen_dev(input7, "change", /*input7_change_handler*/ ctx[16])
+    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[9]),
+    					listen_dev(input1, "change", /*input1_change_handler*/ ctx[10]),
+    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[11]),
+    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[13]),
+    					listen_dev(input4, "change", /*input4_change_handler*/ ctx[14]),
+    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[15]),
+    					listen_dev(input6, "change", /*input6_change_handler*/ ctx[16]),
+    					listen_dev(input7, "change", /*input7_change_handler*/ ctx[17]),
+    					listen_dev(select, "change", /*select_change_handler*/ ctx[18])
     				];
 
     				mounted = true;
@@ -939,6 +984,10 @@ var app = (function () {
     			if (dirty & /*favColor*/ 32) {
     				input7.checked = input7.__value === /*favColor*/ ctx[5];
     			}
+
+    			if (dirty & /*dropdownFavColor*/ 64) {
+    				select_option(select, /*dropdownFavColor*/ ctx[6]);
+    			}
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -963,24 +1012,26 @@ var app = (function () {
     			if (detaching) detach_dev(h10);
     			if (detaching) detach_dev(t6);
     			if (detaching) detach_dev(label1);
-    			/*$$binding_groups*/ ctx[11][0].splice(/*$$binding_groups*/ ctx[11][0].indexOf(input2), 1);
+    			/*$$binding_groups*/ ctx[12][0].splice(/*$$binding_groups*/ ctx[12][0].indexOf(input2), 1);
     			if (detaching) detach_dev(t8);
     			if (detaching) detach_dev(label2);
-    			/*$$binding_groups*/ ctx[11][0].splice(/*$$binding_groups*/ ctx[11][0].indexOf(input3), 1);
+    			/*$$binding_groups*/ ctx[12][0].splice(/*$$binding_groups*/ ctx[12][0].indexOf(input3), 1);
     			if (detaching) detach_dev(t10);
     			if (detaching) detach_dev(label3);
-    			/*$$binding_groups*/ ctx[11][0].splice(/*$$binding_groups*/ ctx[11][0].indexOf(input4), 1);
+    			/*$$binding_groups*/ ctx[12][0].splice(/*$$binding_groups*/ ctx[12][0].indexOf(input4), 1);
     			if (detaching) detach_dev(t12);
     			if (detaching) detach_dev(h11);
     			if (detaching) detach_dev(t14);
     			if (detaching) detach_dev(label4);
-    			/*$$binding_groups*/ ctx[11][1].splice(/*$$binding_groups*/ ctx[11][1].indexOf(input5), 1);
+    			/*$$binding_groups*/ ctx[12][1].splice(/*$$binding_groups*/ ctx[12][1].indexOf(input5), 1);
     			if (detaching) detach_dev(t16);
     			if (detaching) detach_dev(label5);
-    			/*$$binding_groups*/ ctx[11][1].splice(/*$$binding_groups*/ ctx[11][1].indexOf(input6), 1);
+    			/*$$binding_groups*/ ctx[12][1].splice(/*$$binding_groups*/ ctx[12][1].indexOf(input6), 1);
     			if (detaching) detach_dev(t18);
     			if (detaching) detach_dev(label6);
-    			/*$$binding_groups*/ ctx[11][1].splice(/*$$binding_groups*/ ctx[11][1].indexOf(input7), 1);
+    			/*$$binding_groups*/ ctx[12][1].splice(/*$$binding_groups*/ ctx[12][1].indexOf(input7), 1);
+    			if (detaching) detach_dev(t20);
+    			if (detaching) detach_dev(select);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -1006,6 +1057,7 @@ var app = (function () {
     	let agreed;
     	let favColors = ["red"];
     	let favColor = "red";
+    	let dropdownFavColor = "red";
 
     	function setValue(event) {
     		$$invalidate(0, val = event.target.value);
@@ -1069,6 +1121,11 @@ var app = (function () {
     		$$invalidate(5, favColor);
     	}
 
+    	function select_change_handler() {
+    		dropdownFavColor = select_value(this);
+    		$$invalidate(6, dropdownFavColor);
+    	}
+
     	$$self.$capture_state = () => ({
     		CustomInput,
     		Toggle,
@@ -1078,6 +1135,7 @@ var app = (function () {
     		agreed,
     		favColors,
     		favColor,
+    		dropdownFavColor,
     		setValue
     	});
 
@@ -1088,6 +1146,7 @@ var app = (function () {
     		if ('agreed' in $$props) $$invalidate(3, agreed = $$props.agreed);
     		if ('favColors' in $$props) $$invalidate(4, favColors = $$props.favColors);
     		if ('favColor' in $$props) $$invalidate(5, favColor = $$props.favColor);
+    		if ('dropdownFavColor' in $$props) $$invalidate(6, dropdownFavColor = $$props.dropdownFavColor);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -1118,6 +1177,10 @@ var app = (function () {
     		if ($$self.$$.dirty & /*favColor*/ 32) {
     			console.log(favColor);
     		}
+
+    		if ($$self.$$.dirty & /*dropdownFavColor*/ 64) {
+    			console.log(dropdownFavColor);
+    		}
     	};
 
     	return [
@@ -1127,6 +1190,7 @@ var app = (function () {
     		agreed,
     		favColors,
     		favColor,
+    		dropdownFavColor,
     		custominput_val_binding,
     		toggle_chosenOption_binding,
     		input0_input_handler,
@@ -1137,7 +1201,8 @@ var app = (function () {
     		input4_change_handler,
     		input5_change_handler,
     		input6_change_handler,
-    		input7_change_handler
+    		input7_change_handler,
+    		select_change_handler
     	];
     }
 
