@@ -3,15 +3,29 @@
     import TextInput from "../Components/TextInput.svelte";
     import Button from "../Components/Button.svelte";
     import Modal from "../Components/Modal.svelte";
+    import { isEmpty, isValidImageUrl, isValidEmail } from "../helper/validation.js";
 
     let title = "";
+    let titleValid = false;
     let subtitle = "";
+    let subtitleValid = false;
     let address = "";
+    let addressValid = false;
     let imageUrl = "";
+    let imageUrlValid = false;
     let email = "";
+    let emailValid = false;
     let description = "";
+    let descriptionValid = false;
 
     const dispatch = createEventDispatcher();
+
+    $: titleValid = !isEmpty(title);
+    $: subtitleValid = !isEmpty(subtitle);
+    $: addressValid = !isEmpty(address);
+    $: imageUrlValid = isValidImageUrl(imageUrl);
+    $: emailValid = isValidEmail(email);
+    $: descriptionValid = !isEmpty(description);
 
     function submitForm() {
         dispatch("save", {
@@ -40,30 +54,40 @@
         <TextInput 
             id="title"
             label="Title"
+            valid={titleValid}
+            validityMessage="Please enter a valid title"
             value={title}
             on:input={event => (title = event.target.value)} />
         
         <TextInput 
             id="subtitle"
             label="Subtitle"
+            valid={subtitleValid}
+            validityMessage="Please enter a valid subtitle"
             value={subtitle}
             on:input={event => (subtitle = event.target.value)} />
         
         <TextInput 
             id="address"
             label="Address"
+            valid={addressValid}
+            validityMessage="Please enter a valid address"
             value={address}
             on:input={event => (address = event.target.value)} />
         
         <TextInput 
             id="imageUrl"
             label="Image URL"
+            valid={imageUrlValid}
+            validityMessage="Please enter a valid image URL"
             value={imageUrl}
             on:input={event => (imageUrl = event.target.value)} />
         
         <TextInput 
             id="email"
             label="Email"
+            valid={emailValid}
+            validityMessage="Please enter a valid email"
             type="email"
             value={email}
             on:input={event => (email = event.target.value)} />
@@ -71,6 +95,8 @@
         <TextInput 
             id="description"
             label="Description"
+            valid={descriptionValid}
+            validityMessage="Please enter a valid description"
             controlType="textarea"
             value={description}
             on:input={event => (description = event.target.value)} />
