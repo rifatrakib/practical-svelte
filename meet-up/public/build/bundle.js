@@ -603,15 +603,15 @@ var app = (function () {
 
     const file$7 = "src\\Components\\Button.svelte";
 
-    // (88:0) {:else}
+    // (89:0) {:else}
     function create_else_block$1(ctx) {
     	let button;
     	let button_class_value;
     	let current;
     	let mounted;
     	let dispose;
-    	const default_slot_template = /*#slots*/ ctx[5].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[4], null);
+    	const default_slot_template = /*#slots*/ ctx[6].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[5], null);
 
     	const block = {
     		c: function create() {
@@ -619,7 +619,8 @@ var app = (function () {
     			if (default_slot) default_slot.c();
     			attr_dev(button, "class", button_class_value = "" + (/*mode*/ ctx[2] + " " + /*color*/ ctx[3] + " svelte-9ib8ag"));
     			attr_dev(button, "type", /*type*/ ctx[0]);
-    			add_location(button, file$7, 88, 4, 1779);
+    			button.disabled = /*disabled*/ ctx[4];
+    			add_location(button, file$7, 89, 4, 1813);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -631,21 +632,21 @@ var app = (function () {
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(button, "click", /*click_handler*/ ctx[6], false, false, false);
+    				dispose = listen_dev(button, "click", /*click_handler*/ ctx[7], false, false, false);
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
     			if (default_slot) {
-    				if (default_slot.p && (!current || dirty & /*$$scope*/ 16)) {
+    				if (default_slot.p && (!current || dirty & /*$$scope*/ 32)) {
     					update_slot_base(
     						default_slot,
     						default_slot_template,
     						ctx,
-    						/*$$scope*/ ctx[4],
+    						/*$$scope*/ ctx[5],
     						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[4])
-    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[4], dirty, null),
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[5])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[5], dirty, null),
     						null
     					);
     				}
@@ -657,6 +658,10 @@ var app = (function () {
 
     			if (!current || dirty & /*type*/ 1) {
     				attr_dev(button, "type", /*type*/ ctx[0]);
+    			}
+
+    			if (!current || dirty & /*disabled*/ 16) {
+    				prop_dev(button, "disabled", /*disabled*/ ctx[4]);
     			}
     		},
     		i: function intro(local) {
@@ -680,19 +685,19 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(88:0) {:else}",
+    		source: "(89:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (86:0) {#if href}
+    // (87:0) {#if href}
     function create_if_block$3(ctx) {
     	let a;
     	let current;
-    	const default_slot_template = /*#slots*/ ctx[5].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[4], null);
+    	const default_slot_template = /*#slots*/ ctx[6].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[5], null);
 
     	const block = {
     		c: function create() {
@@ -700,7 +705,7 @@ var app = (function () {
     			if (default_slot) default_slot.c();
     			attr_dev(a, "href", /*href*/ ctx[1]);
     			attr_dev(a, "class", "svelte-9ib8ag");
-    			add_location(a, file$7, 86, 4, 1735);
+    			add_location(a, file$7, 87, 4, 1769);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
@@ -713,15 +718,15 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			if (default_slot) {
-    				if (default_slot.p && (!current || dirty & /*$$scope*/ 16)) {
+    				if (default_slot.p && (!current || dirty & /*$$scope*/ 32)) {
     					update_slot_base(
     						default_slot,
     						default_slot_template,
     						ctx,
-    						/*$$scope*/ ctx[4],
+    						/*$$scope*/ ctx[5],
     						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[4])
-    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[4], dirty, null),
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[5])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[5], dirty, null),
     						null
     					);
     				}
@@ -750,7 +755,7 @@ var app = (function () {
     		block,
     		id: create_if_block$3.name,
     		type: "if",
-    		source: "(86:0) {#if href}",
+    		source: "(87:0) {#if href}",
     		ctx
     	});
 
@@ -846,7 +851,8 @@ var app = (function () {
     	let { href = null } = $$props;
     	let { mode = null } = $$props;
     	let { color = null } = $$props;
-    	const writable_props = ['type', 'href', 'mode', 'color'];
+    	let { disabled = false } = $$props;
+    	const writable_props = ['type', 'href', 'mode', 'color', 'disabled'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Button> was created with unknown prop '${key}'`);
@@ -861,29 +867,38 @@ var app = (function () {
     		if ('href' in $$props) $$invalidate(1, href = $$props.href);
     		if ('mode' in $$props) $$invalidate(2, mode = $$props.mode);
     		if ('color' in $$props) $$invalidate(3, color = $$props.color);
-    		if ('$$scope' in $$props) $$invalidate(4, $$scope = $$props.$$scope);
+    		if ('disabled' in $$props) $$invalidate(4, disabled = $$props.disabled);
+    		if ('$$scope' in $$props) $$invalidate(5, $$scope = $$props.$$scope);
     	};
 
-    	$$self.$capture_state = () => ({ type, href, mode, color });
+    	$$self.$capture_state = () => ({ type, href, mode, color, disabled });
 
     	$$self.$inject_state = $$props => {
     		if ('type' in $$props) $$invalidate(0, type = $$props.type);
     		if ('href' in $$props) $$invalidate(1, href = $$props.href);
     		if ('mode' in $$props) $$invalidate(2, mode = $$props.mode);
     		if ('color' in $$props) $$invalidate(3, color = $$props.color);
+    		if ('disabled' in $$props) $$invalidate(4, disabled = $$props.disabled);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [type, href, mode, color, $$scope, slots, click_handler];
+    	return [type, href, mode, color, disabled, $$scope, slots, click_handler];
     }
 
     class Button extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$7, create_fragment$7, safe_not_equal, { type: 0, href: 1, mode: 2, color: 3 });
+
+    		init(this, options, instance$7, create_fragment$7, safe_not_equal, {
+    			type: 0,
+    			href: 1,
+    			mode: 2,
+    			color: 3,
+    			disabled: 4
+    		});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -922,6 +937,14 @@ var app = (function () {
     	}
 
     	set color(value) {
+    		throw new Error("<Button>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get disabled() {
+    		throw new Error("<Button>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set disabled(value) {
     		throw new Error("<Button>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -2646,7 +2669,7 @@ var app = (function () {
     /* src\Meetups\EditMeetUp.svelte generated by Svelte v3.52.0 */
     const file$1 = "src\\Meetups\\EditMeetUp.svelte";
 
-    // (52:0) <Modal title="Edit MeetUp" on:cancel>
+    // (61:0) <Modal title="Edit MeetUp" on:cancel>
     function create_default_slot_2(ctx) {
     	let form;
     	let textinput0;
@@ -2668,67 +2691,67 @@ var app = (function () {
     			props: {
     				id: "title",
     				label: "Title",
-    				valid: /*titleValid*/ ctx[6],
+    				valid: /*titleValid*/ ctx[1],
     				validityMessage: "Please enter a valid title",
     				value: /*title*/ ctx[0]
     			},
     			$$inline: true
     		});
 
-    	textinput0.$on("input", /*input_handler*/ ctx[14]);
+    	textinput0.$on("input", /*input_handler*/ ctx[15]);
 
     	textinput1 = new TextInput({
     			props: {
     				id: "subtitle",
     				label: "Subtitle",
-    				valid: /*subtitleValid*/ ctx[7],
+    				valid: /*subtitleValid*/ ctx[3],
     				validityMessage: "Please enter a valid subtitle",
-    				value: /*subtitle*/ ctx[1]
+    				value: /*subtitle*/ ctx[2]
     			},
     			$$inline: true
     		});
 
-    	textinput1.$on("input", /*input_handler_1*/ ctx[15]);
+    	textinput1.$on("input", /*input_handler_1*/ ctx[16]);
 
     	textinput2 = new TextInput({
     			props: {
     				id: "address",
     				label: "Address",
-    				valid: /*addressValid*/ ctx[8],
+    				valid: /*addressValid*/ ctx[5],
     				validityMessage: "Please enter a valid address",
-    				value: /*address*/ ctx[2]
+    				value: /*address*/ ctx[4]
     			},
     			$$inline: true
     		});
 
-    	textinput2.$on("input", /*input_handler_2*/ ctx[16]);
+    	textinput2.$on("input", /*input_handler_2*/ ctx[17]);
 
     	textinput3 = new TextInput({
     			props: {
     				id: "imageUrl",
     				label: "Image URL",
-    				valid: /*imageUrlValid*/ ctx[9],
+    				valid: /*imageUrlValid*/ ctx[7],
     				validityMessage: "Please enter a valid image URL",
-    				value: /*imageUrl*/ ctx[3]
+    				value: /*imageUrl*/ ctx[6]
     			},
     			$$inline: true
     		});
 
-    	textinput3.$on("input", /*input_handler_3*/ ctx[17]);
+    	textinput3.$on("input", /*input_handler_3*/ ctx[18]);
 
     	textinput4 = new TextInput({
     			props: {
     				id: "email",
     				label: "Email",
-    				valid: /*emailValid*/ ctx[10],
+    				valid: /*emailValid*/ ctx[9],
     				validityMessage: "Please enter a valid email",
     				type: "email",
-    				value: /*email*/ ctx[4]
+    				value: /*email*/ ctx[8]
     			},
     			$$inline: true
     		});
 
-    	textinput4.$on("input", /*input_handler_4*/ ctx[18]);
+    	textinput4.$on("input", /*input_handler_4*/ ctx[19]);
 
     	textinput5 = new TextInput({
     			props: {
@@ -2737,12 +2760,12 @@ var app = (function () {
     				valid: /*descriptionValid*/ ctx[11],
     				validityMessage: "Please enter a valid description",
     				controlType: "textarea",
-    				value: /*description*/ ctx[5]
+    				value: /*description*/ ctx[10]
     			},
     			$$inline: true
     		});
 
-    	textinput5.$on("input", /*input_handler_5*/ ctx[19]);
+    	textinput5.$on("input", /*input_handler_5*/ ctx[20]);
 
     	const block = {
     		c: function create() {
@@ -2759,7 +2782,7 @@ var app = (function () {
     			t4 = space();
     			create_component(textinput5.$$.fragment);
     			attr_dev(form, "class", "svelte-xg754s");
-    			add_location(form, file$1, 52, 4, 1417);
+    			add_location(form, file$1, 61, 4, 1617);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, form, anchor);
@@ -2777,34 +2800,34 @@ var app = (function () {
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(form, "submit", prevent_default(/*submitForm*/ ctx[12]), false, true, false);
+    				dispose = listen_dev(form, "submit", prevent_default(/*submitForm*/ ctx[13]), false, true, false);
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
     			const textinput0_changes = {};
-    			if (dirty & /*titleValid*/ 64) textinput0_changes.valid = /*titleValid*/ ctx[6];
+    			if (dirty & /*titleValid*/ 2) textinput0_changes.valid = /*titleValid*/ ctx[1];
     			if (dirty & /*title*/ 1) textinput0_changes.value = /*title*/ ctx[0];
     			textinput0.$set(textinput0_changes);
     			const textinput1_changes = {};
-    			if (dirty & /*subtitleValid*/ 128) textinput1_changes.valid = /*subtitleValid*/ ctx[7];
-    			if (dirty & /*subtitle*/ 2) textinput1_changes.value = /*subtitle*/ ctx[1];
+    			if (dirty & /*subtitleValid*/ 8) textinput1_changes.valid = /*subtitleValid*/ ctx[3];
+    			if (dirty & /*subtitle*/ 4) textinput1_changes.value = /*subtitle*/ ctx[2];
     			textinput1.$set(textinput1_changes);
     			const textinput2_changes = {};
-    			if (dirty & /*addressValid*/ 256) textinput2_changes.valid = /*addressValid*/ ctx[8];
-    			if (dirty & /*address*/ 4) textinput2_changes.value = /*address*/ ctx[2];
+    			if (dirty & /*addressValid*/ 32) textinput2_changes.valid = /*addressValid*/ ctx[5];
+    			if (dirty & /*address*/ 16) textinput2_changes.value = /*address*/ ctx[4];
     			textinput2.$set(textinput2_changes);
     			const textinput3_changes = {};
-    			if (dirty & /*imageUrlValid*/ 512) textinput3_changes.valid = /*imageUrlValid*/ ctx[9];
-    			if (dirty & /*imageUrl*/ 8) textinput3_changes.value = /*imageUrl*/ ctx[3];
+    			if (dirty & /*imageUrlValid*/ 128) textinput3_changes.valid = /*imageUrlValid*/ ctx[7];
+    			if (dirty & /*imageUrl*/ 64) textinput3_changes.value = /*imageUrl*/ ctx[6];
     			textinput3.$set(textinput3_changes);
     			const textinput4_changes = {};
-    			if (dirty & /*emailValid*/ 1024) textinput4_changes.valid = /*emailValid*/ ctx[10];
-    			if (dirty & /*email*/ 16) textinput4_changes.value = /*email*/ ctx[4];
+    			if (dirty & /*emailValid*/ 512) textinput4_changes.valid = /*emailValid*/ ctx[9];
+    			if (dirty & /*email*/ 256) textinput4_changes.value = /*email*/ ctx[8];
     			textinput4.$set(textinput4_changes);
     			const textinput5_changes = {};
     			if (dirty & /*descriptionValid*/ 2048) textinput5_changes.valid = /*descriptionValid*/ ctx[11];
-    			if (dirty & /*description*/ 32) textinput5_changes.value = /*description*/ ctx[5];
+    			if (dirty & /*description*/ 1024) textinput5_changes.value = /*description*/ ctx[10];
     			textinput5.$set(textinput5_changes);
     		},
     		i: function intro(local) {
@@ -2843,14 +2866,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2.name,
     		type: "slot",
-    		source: "(52:0) <Modal title=\\\"Edit MeetUp\\\" on:cancel>",
+    		source: "(61:0) <Modal title=\\\"Edit MeetUp\\\" on:cancel>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (105:8) <Button type="button" mode="outline" on:click="{cancel}">
+    // (114:8) <Button type="button" mode="outline" on:click="{cancel}">
     function create_default_slot_1(ctx) {
     	let t;
 
@@ -2870,14 +2893,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(105:8) <Button type=\\\"button\\\" mode=\\\"outline\\\" on:click=\\\"{cancel}\\\">",
+    		source: "(114:8) <Button type=\\\"button\\\" mode=\\\"outline\\\" on:click=\\\"{cancel}\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (106:8) <Button type="button" on:click="{submitForm}">
+    // (115:8) <Button type="button" on:click="{submitForm}" disabled="{!formValid}">
     function create_default_slot$1(ctx) {
     	let t;
 
@@ -2897,14 +2920,14 @@ var app = (function () {
     		block,
     		id: create_default_slot$1.name,
     		type: "slot",
-    		source: "(106:8) <Button type=\\\"button\\\" on:click=\\\"{submitForm}\\\">",
+    		source: "(115:8) <Button type=\\\"button\\\" on:click=\\\"{submitForm}\\\" disabled=\\\"{!formValid}\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (104:4) 
+    // (113:4) 
     function create_footer_slot(ctx) {
     	let div;
     	let button0;
@@ -2922,18 +2945,19 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	button0.$on("click", /*cancel*/ ctx[13]);
+    	button0.$on("click", /*cancel*/ ctx[14]);
 
     	button1 = new Button({
     			props: {
     				type: "button",
+    				disabled: !/*formValid*/ ctx[12],
     				$$slots: { default: [create_default_slot$1] },
     				$$scope: { ctx }
     			},
     			$$inline: true
     		});
 
-    	button1.$on("click", /*submitForm*/ ctx[12]);
+    	button1.$on("click", /*submitForm*/ ctx[13]);
 
     	const block = {
     		c: function create() {
@@ -2942,7 +2966,7 @@ var app = (function () {
     			t = space();
     			create_component(button1.$$.fragment);
     			attr_dev(div, "slot", "footer");
-    			add_location(div, file$1, 103, 4, 3204);
+    			add_location(div, file$1, 112, 4, 3404);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -2954,14 +2978,15 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const button0_changes = {};
 
-    			if (dirty & /*$$scope*/ 4194304) {
+    			if (dirty & /*$$scope*/ 8388608) {
     				button0_changes.$$scope = { dirty, ctx };
     			}
 
     			button0.$set(button0_changes);
     			const button1_changes = {};
+    			if (dirty & /*formValid*/ 4096) button1_changes.disabled = !/*formValid*/ ctx[12];
 
-    			if (dirty & /*$$scope*/ 4194304) {
+    			if (dirty & /*$$scope*/ 8388608) {
     				button1_changes.$$scope = { dirty, ctx };
     			}
 
@@ -2989,7 +3014,7 @@ var app = (function () {
     		block,
     		id: create_footer_slot.name,
     		type: "slot",
-    		source: "(104:4) ",
+    		source: "(113:4) ",
     		ctx
     	});
 
@@ -3012,7 +3037,7 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	modal.$on("cancel", /*cancel_handler*/ ctx[20]);
+    	modal.$on("cancel", /*cancel_handler*/ ctx[21]);
 
     	const block = {
     		c: function create() {
@@ -3028,7 +3053,7 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const modal_changes = {};
 
-    			if (dirty & /*$$scope, descriptionValid, description, emailValid, email, imageUrlValid, imageUrl, addressValid, address, subtitleValid, subtitle, titleValid, title*/ 4198399) {
+    			if (dirty & /*$$scope, formValid, descriptionValid, description, emailValid, email, imageUrlValid, imageUrl, addressValid, address, subtitleValid, subtitle, titleValid, title*/ 8396799) {
     				modal_changes.$$scope = { dirty, ctx };
     			}
 
@@ -3074,6 +3099,7 @@ var app = (function () {
     	let emailValid = false;
     	let description = "";
     	let descriptionValid = false;
+    	let formValid = false;
     	const dispatch = createEventDispatcher();
 
     	function submitForm() {
@@ -3098,11 +3124,11 @@ var app = (function () {
     	});
 
     	const input_handler = event => $$invalidate(0, title = event.target.value);
-    	const input_handler_1 = event => $$invalidate(1, subtitle = event.target.value);
-    	const input_handler_2 = event => $$invalidate(2, address = event.target.value);
-    	const input_handler_3 = event => $$invalidate(3, imageUrl = event.target.value);
-    	const input_handler_4 = event => $$invalidate(4, email = event.target.value);
-    	const input_handler_5 = event => $$invalidate(5, description = event.target.value);
+    	const input_handler_1 = event => $$invalidate(2, subtitle = event.target.value);
+    	const input_handler_2 = event => $$invalidate(4, address = event.target.value);
+    	const input_handler_3 = event => $$invalidate(6, imageUrl = event.target.value);
+    	const input_handler_4 = event => $$invalidate(8, email = event.target.value);
+    	const input_handler_5 = event => $$invalidate(10, description = event.target.value);
 
     	function cancel_handler(event) {
     		bubble.call(this, $$self, event);
@@ -3128,6 +3154,7 @@ var app = (function () {
     		emailValid,
     		description,
     		descriptionValid,
+    		formValid,
     		dispatch,
     		submitForm,
     		cancel
@@ -3135,17 +3162,18 @@ var app = (function () {
 
     	$$self.$inject_state = $$props => {
     		if ('title' in $$props) $$invalidate(0, title = $$props.title);
-    		if ('titleValid' in $$props) $$invalidate(6, titleValid = $$props.titleValid);
-    		if ('subtitle' in $$props) $$invalidate(1, subtitle = $$props.subtitle);
-    		if ('subtitleValid' in $$props) $$invalidate(7, subtitleValid = $$props.subtitleValid);
-    		if ('address' in $$props) $$invalidate(2, address = $$props.address);
-    		if ('addressValid' in $$props) $$invalidate(8, addressValid = $$props.addressValid);
-    		if ('imageUrl' in $$props) $$invalidate(3, imageUrl = $$props.imageUrl);
-    		if ('imageUrlValid' in $$props) $$invalidate(9, imageUrlValid = $$props.imageUrlValid);
-    		if ('email' in $$props) $$invalidate(4, email = $$props.email);
-    		if ('emailValid' in $$props) $$invalidate(10, emailValid = $$props.emailValid);
-    		if ('description' in $$props) $$invalidate(5, description = $$props.description);
+    		if ('titleValid' in $$props) $$invalidate(1, titleValid = $$props.titleValid);
+    		if ('subtitle' in $$props) $$invalidate(2, subtitle = $$props.subtitle);
+    		if ('subtitleValid' in $$props) $$invalidate(3, subtitleValid = $$props.subtitleValid);
+    		if ('address' in $$props) $$invalidate(4, address = $$props.address);
+    		if ('addressValid' in $$props) $$invalidate(5, addressValid = $$props.addressValid);
+    		if ('imageUrl' in $$props) $$invalidate(6, imageUrl = $$props.imageUrl);
+    		if ('imageUrlValid' in $$props) $$invalidate(7, imageUrlValid = $$props.imageUrlValid);
+    		if ('email' in $$props) $$invalidate(8, email = $$props.email);
+    		if ('emailValid' in $$props) $$invalidate(9, emailValid = $$props.emailValid);
+    		if ('description' in $$props) $$invalidate(10, description = $$props.description);
     		if ('descriptionValid' in $$props) $$invalidate(11, descriptionValid = $$props.descriptionValid);
+    		if ('formValid' in $$props) $$invalidate(12, formValid = $$props.formValid);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -3154,43 +3182,48 @@ var app = (function () {
 
     	$$self.$$.update = () => {
     		if ($$self.$$.dirty & /*title*/ 1) {
-    			$$invalidate(6, titleValid = !isEmpty(title));
+    			$$invalidate(1, titleValid = !isEmpty(title));
     		}
 
-    		if ($$self.$$.dirty & /*subtitle*/ 2) {
-    			$$invalidate(7, subtitleValid = !isEmpty(subtitle));
+    		if ($$self.$$.dirty & /*subtitle*/ 4) {
+    			$$invalidate(3, subtitleValid = !isEmpty(subtitle));
     		}
 
-    		if ($$self.$$.dirty & /*address*/ 4) {
-    			$$invalidate(8, addressValid = !isEmpty(address));
+    		if ($$self.$$.dirty & /*address*/ 16) {
+    			$$invalidate(5, addressValid = !isEmpty(address));
     		}
 
-    		if ($$self.$$.dirty & /*imageUrl*/ 8) {
-    			$$invalidate(9, imageUrlValid = isValidImageUrl(imageUrl));
+    		if ($$self.$$.dirty & /*imageUrl*/ 64) {
+    			$$invalidate(7, imageUrlValid = isValidImageUrl(imageUrl));
     		}
 
-    		if ($$self.$$.dirty & /*email*/ 16) {
-    			$$invalidate(10, emailValid = isValidEmail(email));
+    		if ($$self.$$.dirty & /*email*/ 256) {
+    			$$invalidate(9, emailValid = isValidEmail(email));
     		}
 
-    		if ($$self.$$.dirty & /*description*/ 32) {
+    		if ($$self.$$.dirty & /*description*/ 1024) {
     			$$invalidate(11, descriptionValid = !isEmpty(description));
+    		}
+
+    		if ($$self.$$.dirty & /*titleValid, subtitleValid, addressValid, imageUrlValid, emailValid, descriptionValid*/ 2730) {
+    			$$invalidate(12, formValid = titleValid && subtitleValid && addressValid && imageUrlValid && emailValid && descriptionValid);
     		}
     	};
 
     	return [
     		title,
-    		subtitle,
-    		address,
-    		imageUrl,
-    		email,
-    		description,
     		titleValid,
+    		subtitle,
     		subtitleValid,
+    		address,
     		addressValid,
+    		imageUrl,
     		imageUrlValid,
+    		email,
     		emailValid,
+    		description,
     		descriptionValid,
+    		formValid,
     		submitForm,
     		cancel,
     		input_handler,
