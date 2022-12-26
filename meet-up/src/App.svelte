@@ -1,31 +1,9 @@
 <script>
+    import meetups from "./Meetups/meetups-store";
     import Header from "./Components/Header.svelte";
     import MeetUpGrid from "./Meetups/MeetUpGrid.svelte";
     import Button from "./Components/Button.svelte";
     import EditMeetUp from "./Meetups/EditMeetUp.svelte";
-
-    let meetUps = [
-        {
-            "id": "m1",
-            "title": "Coding Bootcamp",
-            "subtitle": "Learn to code in 2 hours",
-            "description": "There will be some experts teaching you how to code",
-            "imageUrl": "https://static.dnls.nl/home/5/60P9A7yn96sltKNLXJKFed/all-event-venues-of-london.jpg",
-            "address": "221B Baker St, London",
-            "contactEmail": "code@test.com",
-            "isFavorite": false,
-        },
-        {
-            "id": "m2",
-            "title": "Swim Together",
-            "subtitle": "Let's learn how to swim",
-            "description": "Having fun while teaching and swimming",
-            "imageUrl": "https://static.dnls.nl/home/5/60P9A7yn96sltKNLXJKFed/all-event-venues-of-london.jpg",
-            "address": "221B Baker St, London",
-            "contactEmail": "swim@test.com",
-            "isFavorite": false,
-        },
-    ];
 
     let editMode;
 
@@ -78,5 +56,5 @@
     {#if editMode === "add"}
         <EditMeetUp on:save="{addMeetUp}" on:cancel="{cancelEdit}" />
     {/if}
-    <MeetUpGrid meetUps={meetUps} on:togglefavorite="{toggleFavorite}" />
+    <MeetUpGrid meetUps={$meetups} on:togglefavorite="{toggleFavorite}" />
 </main>
