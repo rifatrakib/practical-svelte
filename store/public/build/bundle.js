@@ -41,6 +41,21 @@ var app = (function () {
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
     }
+    function validate_store(store, name) {
+        if (store != null && typeof store.subscribe !== 'function') {
+            throw new Error(`'${name}' is not a store with a 'subscribe' method`);
+        }
+    }
+    function subscribe(store, ...callbacks) {
+        if (store == null) {
+            return noop;
+        }
+        const unsub = store.subscribe(...callbacks);
+        return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
+    }
+    function component_subscribe(component, store, callback) {
+        component.$$.on_destroy.push(subscribe(store, callback));
+    }
     function create_slot(definition, ctx, $$scope, fn) {
         if (definition) {
             const slot_ctx = get_slot_context(definition, ctx, $$scope, fn);
@@ -159,17 +174,6 @@ var app = (function () {
         if (!current_component)
             throw new Error('Function called outside component initialization');
         return current_component;
-    }
-    /**
-     * Schedules a callback to run immediately before the component is unmounted.
-     *
-     * Out of `onMount`, `beforeUpdate`, `afterUpdate` and `onDestroy`, this is the
-     * only one that runs inside a server-side component.
-     *
-     * https://svelte.dev/docs#run-time-svelte-ondestroy
-     */
-    function onDestroy(fn) {
-        get_current_component().$$.on_destroy.push(fn);
     }
     /**
      * Creates an event dispatcher that can be used to dispatch [component events](/docs#template-syntax-component-directives-on-eventname).
@@ -1206,7 +1210,7 @@ var app = (function () {
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[2] = list[i];
+    	child_ctx[1] = list[i];
     	return child_ctx;
     }
 
@@ -1218,7 +1222,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "No items in cart yet!";
-    			add_location(p, file$b, 52, 12, 1009);
+    			add_location(p, file$b, 52, 12, 1048);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -1240,7 +1244,7 @@ var app = (function () {
     	return block;
     }
 
-    // (50:8) {#each items as item (item.id)}
+    // (50:8) {#each $cartItems as item (item.id)}
     function create_each_block$2(key_1, ctx) {
     	let first;
     	let cartitem;
@@ -1248,9 +1252,9 @@ var app = (function () {
 
     	cartitem = new CartItem({
     			props: {
-    				id: /*item*/ ctx[2].id,
-    				title: /*item*/ ctx[2].title,
-    				price: /*item*/ ctx[2].price
+    				id: /*item*/ ctx[1].id,
+    				title: /*item*/ ctx[1].title,
+    				price: /*item*/ ctx[1].price
     			},
     			$$inline: true
     		});
@@ -1271,9 +1275,9 @@ var app = (function () {
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
     			const cartitem_changes = {};
-    			if (dirty & /*items*/ 1) cartitem_changes.id = /*item*/ ctx[2].id;
-    			if (dirty & /*items*/ 1) cartitem_changes.title = /*item*/ ctx[2].title;
-    			if (dirty & /*items*/ 1) cartitem_changes.price = /*item*/ ctx[2].price;
+    			if (dirty & /*$cartItems*/ 1) cartitem_changes.id = /*item*/ ctx[1].id;
+    			if (dirty & /*$cartItems*/ 1) cartitem_changes.title = /*item*/ ctx[1].title;
+    			if (dirty & /*$cartItems*/ 1) cartitem_changes.price = /*item*/ ctx[1].price;
     			cartitem.$set(cartitem_changes);
     		},
     		i: function intro(local) {
@@ -1295,7 +1299,7 @@ var app = (function () {
     		block,
     		id: create_each_block$2.name,
     		type: "each",
-    		source: "(50:8) {#each items as item (item.id)}",
+    		source: "(50:8) {#each $cartItems as item (item.id)}",
     		ctx
     	});
 
@@ -1310,9 +1314,9 @@ var app = (function () {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
     	let current;
-    	let each_value = /*items*/ ctx[0];
+    	let each_value = /*$cartItems*/ ctx[0];
     	validate_each_argument(each_value);
-    	const get_key = ctx => /*item*/ ctx[2].id;
+    	const get_key = ctx => /*item*/ ctx[1].id;
     	validate_each_keys(ctx, each_value, get_each_context$2, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
@@ -1343,11 +1347,11 @@ var app = (function () {
     				each_1_else.c();
     			}
 
-    			add_location(h1, file$b, 47, 4, 842);
+    			add_location(h1, file$b, 47, 4, 876);
     			attr_dev(ul, "class", "svelte-1rx6pot");
-    			add_location(ul, file$b, 48, 4, 860);
+    			add_location(ul, file$b, 48, 4, 894);
     			attr_dev(section, "class", "svelte-1rx6pot");
-    			add_location(section, file$b, 46, 0, 828);
+    			add_location(section, file$b, 46, 0, 862);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1369,8 +1373,8 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*items*/ 1) {
-    				each_value = /*items*/ ctx[0];
+    			if (dirty & /*$cartItems*/ 1) {
+    				each_value = /*$cartItems*/ ctx[0];
     				validate_each_argument(each_value);
     				group_outros();
     				validate_each_keys(ctx, each_value, get_each_context$2, get_key);
@@ -1428,43 +1432,19 @@ var app = (function () {
     }
 
     function instance$c($$self, $$props, $$invalidate) {
+    	let $cartItems;
+    	validate_store(cart, 'cartItems');
+    	component_subscribe($$self, cart, $$value => $$invalidate(0, $cartItems = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Cart', slots, []);
-    	let items;
-
-    	const unsubscribe = cart.subscribe(its => {
-    		$$invalidate(0, items = its);
-    	});
-
-    	onDestroy(() => {
-    		if (unsubscribe) {
-    			unsubscribe();
-    		}
-    	});
-
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Cart> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({
-    		onDestroy,
-    		CartItem,
-    		cartItems: cart,
-    		items,
-    		unsubscribe
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('items' in $$props) $$invalidate(0, items = $$props.items);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [items];
+    	$$self.$capture_state = () => ({ CartItem, cartItems: cart, $cartItems });
+    	return [$cartItems];
     }
 
     class Cart extends SvelteComponentDev {
