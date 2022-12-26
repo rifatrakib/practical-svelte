@@ -9,15 +9,19 @@
 
     let showDescription = false;
     let description = "Not available!";
-    let fetchedProducts = [];
+    // let fetchedProducts = [];
 
-    products.subscribe(prods => {
-        fetchedProducts = prods;
-    });
+    // products.subscribe(prods => {
+    //     fetchedProducts = prods;
+    // });
 
     function displayDescription() {
         showDescription = !showDescription;
-        description = fetchedProducts.find(p => p.id === id).description;
+        // description = fetchedProducts.find(p => p.id === id).description;
+        const unsubscribe = products.subscribe(prods => {
+            description = prods.find(p => p.id === id).description;
+        });
+        unsubscribe();
     }
 
     function removeFromCart() {
