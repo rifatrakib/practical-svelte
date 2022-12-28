@@ -6,7 +6,7 @@ const meetups = writable([
         "title": "Coding Bootcamp",
         "subtitle": "Learn to code in 2 hours",
         "description": "There will be some experts teaching you how to code",
-        "imageUrl": "https://static.dnls.nl/home/5/60P9A7yn96sltKNLXJKFed/all-event-venues-of-london.jpg",
+        "imageUrl": "https://media.licdn.com/dms/image/C5616AQHQgyiC5Wv--w/profile-displaybackgroundimage-shrink_350_1400/0/1608105676401?e=1677715200&v=beta&t=Vb0FVyLu-JRPWW2rh62Aye5B0t1nkXG357kE5lyotCk",
         "address": "221B Baker St, London",
         "contactEmail": "code@test.com",
         "isFavorite": false,
@@ -16,7 +16,7 @@ const meetups = writable([
         "title": "Swim Together",
         "subtitle": "Let's learn how to swim",
         "description": "Having fun while teaching and swimming",
-        "imageUrl": "https://static.dnls.nl/home/5/60P9A7yn96sltKNLXJKFed/all-event-venues-of-london.jpg",
+        "imageUrl": "https://media.licdn.com/dms/image/C5616AQHQgyiC5Wv--w/profile-displaybackgroundimage-shrink_350_1400/0/1608105676401?e=1677715200&v=beta&t=Vb0FVyLu-JRPWW2rh62Aye5B0t1nkXG357kE5lyotCk",
         "address": "221B Baker St, London",
         "contactEmail": "swim@test.com",
         "isFavorite": false,
@@ -33,6 +33,15 @@ const customMeetupsStore = {
         };
         meetups.update(items => {
             return [newMeetup, ...items];
+        });
+    },
+    updateMeetup: (id, meetupData) => {
+        meetups.update(items => {
+            const meetupIndex = items.findIndex(i => i.id === id);
+            const updatedMeetup = {...items[meetupIndex], ...meetupData};
+            const updatedMeetups = [...items];
+            updatedMeetups[meetupIndex] = updatedMeetup;
+            return updatedMeetups;
         });
     },
     toggleFavorite: (id) => {

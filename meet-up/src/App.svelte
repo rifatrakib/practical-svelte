@@ -7,15 +7,18 @@
     import MeetUpDetail from "./Meetups/MeetUpDetail.svelte";
 
     let editMode;
+    let editedId;
     let page = "overview";
     let pageData = {};
 
-    function addMeetUp(event) {
+    function savedMeetUp(event) {
         editMode = null;
+        editedId = null;
     }
 
     function cancelEdit() {
         editMode = null;
+        editedId = null;
     }
 
     function showDetails(event) {
@@ -26,6 +29,11 @@
     function closeDetail() {
         page = "overview";
         pageData = {};
+    }
+
+    function startEdit(event) {
+        editMode = "edit";
+        editedId = event.detail;
     }
 </script>
 
@@ -44,12 +52,15 @@
 <main>
     {#if page === "overview"}
         <div class="meetup-controls">
-            <Button on:click={() => editMode = "add"}>New MeetUp</Button>
+            <Button on:click={() => editMode = "edit"}>New MeetUp</Button>
         </div>
-        {#if editMode === "add"}
-            <EditMeetUp on:save="{addMeetUp}" on:cancel="{cancelEdit}" />
+        {#if editMode === "edit"}
+            <EditMeetUp id={editedId} on:save="{savedMeetUp}" on:cancel="{cancelEdit}" />
         {/if}
-        <MeetUpGrid meetUps={$meetups} on:showDetails="{showDetails}" />
+        <MeetUpGrid
+            meetUps={$meetups}
+            on:showDetails="{showDetails}"
+            on:edit={startEdit} />
     {:else}
         <MeetUpDetail id="{pageData.id}" on:close="{closeDetail}" />
     {/if}

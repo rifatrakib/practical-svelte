@@ -100,6 +100,12 @@
         <Button
             type="button"
             mode="outline"
+            on:click={() => dispatch("edit", id)}>
+                Edit
+        </Button>
+        <Button
+            type="button"
+            mode="outline"
             color="{isFav ? null : 'success'}"
             on:click={toggleFavorite}>
                 {isFav ? "Unfavorite" : "Favorite"}

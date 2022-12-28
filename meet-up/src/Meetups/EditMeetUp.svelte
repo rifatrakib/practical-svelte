@@ -1,10 +1,12 @@
 <script>
     import meetups from "./meetups-store";
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import TextInput from "../Components/TextInput.svelte";
     import Button from "../Components/Button.svelte";
     import Modal from "../Components/Modal.svelte";
     import { isEmpty, isValidImageUrl, isValidEmail } from "../helper/validation.js";
+
+    export let id = null;
 
     let title = "";
     let subtitle = "";
@@ -13,7 +15,18 @@
     let email = "";
     let description = "";
 
-    let formValid = false;
+    if (id) {
+        const unsubscribe = meetups.subscribe(items => {
+            const selectedMeetup = items.find(i => i.id === id);
+            title = selectedMeetup.title;
+            subtitle = selectedMeetup.subtitle;
+            address = selectedMeetup.address;
+            email = selectedMeetup.contactEmail;
+            description = selectedMeetup.description;
+            imageUrl = selectedMeetup.imageUrl;
+        });
+        unsubscribe();
+    }
 
     const dispatch = createEventDispatcher();
 
@@ -41,7 +54,11 @@
             description: description,
         };
 
-        meetups.addMeetup(meetupData);
+        if (id) {
+            meetups.updateMeetup(id, meetupData);
+        } else {
+            meetups.addMeetup(meetupData);
+        }
         dispatch("save");
     }
 
@@ -57,7 +74,7 @@
 </style>
 
 <Modal title="Edit MeetUp" on:cancel>
-    <form on:submit|preventDefault="{submitForm}">
+    <form on:submit="{submitForm}">
         <TextInput 
             id="title"
             label="Title"

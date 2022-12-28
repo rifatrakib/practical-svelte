@@ -9,5 +9,5 @@ export function isValidEmail(val) {
 }
 
 export function isValidImageUrl(val) {
-    return new RegExp(/(https?:\/\/.*\.(?:png|jpg))/i).test(val);
+    return new RegExp(/(https?:\/\/.*)/i).test(val);
 }
