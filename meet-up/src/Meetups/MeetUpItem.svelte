@@ -52,10 +52,7 @@
     }
 
     h1.is-favorite {
-        background: #01a129;
-        color: white;
-        padding: 0 0.5rem;
-        border-radius: 5px;
+        color: #cf0056;
     }
 
     h2 {
@@ -76,18 +73,29 @@
     .content {
         height: 4rem;
     }
+
+    #article-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    #header-content {
+        text-align: left;
+    }
 </style>
 
 <article>
-    <header>
-        <h1>
-            {title}
+    <header id="article-header">
+        <div id="header-content">
+            <h1 class:is-favorite={isFav}>{title}</h1>
+            <h2>{subtitle}</h2>
+            <p>{address}</p>
+        </div>
+        <div>
             {#if isFav}
-                <Badge>FAVORITE</Badge>
+                <h1><Badge>FAVORITE</Badge></h1>
             {/if}
-        </h1>
-        <h2>{subtitle}</h2>
-        <p>{address}</p>
+        </div>
     </header>
     <div class="image">
         <img src="{imageUrl}" alt="{title}" />
