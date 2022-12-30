@@ -5,6 +5,8 @@
     import Button from "../Components/Button.svelte";
     import Modal from "../Components/Modal.svelte";
     import { isEmpty, isValidImageUrl, isValidEmail } from "../helper/validation.js";
+    import { tweened } from "svelte/motion";
+    import { cubicIn } from "svelte/easing";
 
     export let id = null;
 
@@ -43,6 +45,18 @@
         imageUrlValid &&
         emailValid &&
         descriptionValid;
+    
+    $: validItems = [
+        titleValid, subtitleValid, addressValid,
+        imageUrlValid, emailValid, descriptionValid
+    ].filter(i => i === true).length;
+
+    const progress = tweened(0, {
+        duration: 700,
+        easing: cubicIn,
+    });
+
+    $: progress.set(Math.floor(validItems/6 * 1000) / 1000);
 
     function submitForm() {
         const meetupData = {
@@ -76,9 +90,26 @@
     form {
         width: 100%;
     }
+
+    progress {
+        width: 100%;
+        height: 5px;
+        border-radius: 50px;
+        background: crimson;
+        color: lightblue;
+    }
+
+    progress::-moz-progress-bar {
+        background: lightblue;
+    }
+
+    progress::-webkit-progress-value {
+        background: #cf0056;
+    }
 </style>
 
 <Modal title="Edit MeetUp" on:cancel>
+    <progress value={$progress}></progress>
     <form on:submit="{submitForm}">
         <TextInput 
             id="title"
