@@ -113,12 +113,6 @@ var app = (function () {
             node.parentNode.removeChild(node);
         }
     }
-    function destroy_each(iterations, detaching) {
-        for (let i = 0; i < iterations.length; i += 1) {
-            if (iterations[i])
-                iterations[i].d(detaching);
-        }
-    }
     function element(name) {
         return document.createElement(name);
     }
@@ -221,6 +215,75 @@ var app = (function () {
             });
             managed_styles.clear();
         });
+    }
+
+    function create_animation(node, from, fn, params) {
+        if (!from)
+            return noop;
+        const to = node.getBoundingClientRect();
+        if (from.left === to.left && from.right === to.right && from.top === to.top && from.bottom === to.bottom)
+            return noop;
+        const { delay = 0, duration = 300, easing = identity, 
+        // @ts-ignore todo: should this be separated from destructuring? Or start/end added to public api and documentation?
+        start: start_time = now() + delay, 
+        // @ts-ignore todo:
+        end = start_time + duration, tick = noop, css } = fn(node, { from, to }, params);
+        let running = true;
+        let started = false;
+        let name;
+        function start() {
+            if (css) {
+                name = create_rule(node, 0, 1, duration, delay, easing, css);
+            }
+            if (!delay) {
+                started = true;
+            }
+        }
+        function stop() {
+            if (css)
+                delete_rule(node, name);
+            running = false;
+        }
+        loop(now => {
+            if (!started && now >= start_time) {
+                started = true;
+            }
+            if (started && now >= end) {
+                tick(1, 0);
+                stop();
+            }
+            if (!running) {
+                return false;
+            }
+            if (started) {
+                const p = now - start_time;
+                const t = 0 + 1 * easing(p / duration);
+                tick(t, 1 - t);
+            }
+            return true;
+        });
+        start();
+        tick(0, 1);
+        return stop;
+    }
+    function fix_position(node) {
+        const style = getComputedStyle(node);
+        if (style.position !== 'absolute' && style.position !== 'fixed') {
+            const { width, height } = style;
+            const a = node.getBoundingClientRect();
+            node.style.position = 'absolute';
+            node.style.width = width;
+            node.style.height = height;
+            add_transform(node, a);
+        }
+    }
+    function add_transform(node, a) {
+        const b = node.getBoundingClientRect();
+        if (a.left !== b.left || a.top !== b.top) {
+            const style = getComputedStyle(node);
+            const transform = style.transform === 'none' ? '' : style.transform;
+            node.style.transform = `${transform} translate(${a.left - b.left}px, ${a.top - b.top}px)`;
+        }
     }
 
     let current_component;
@@ -364,6 +427,127 @@ var app = (function () {
         }
     }
     const null_transition = { duration: 0 };
+    function create_in_transition(node, fn, params) {
+        const options = { direction: 'in' };
+        let config = fn(node, params, options);
+        let running = false;
+        let animation_name;
+        let task;
+        let uid = 0;
+        function cleanup() {
+            if (animation_name)
+                delete_rule(node, animation_name);
+        }
+        function go() {
+            const { delay = 0, duration = 300, easing = identity, tick = noop, css } = config || null_transition;
+            if (css)
+                animation_name = create_rule(node, 0, 1, duration, delay, easing, css, uid++);
+            tick(0, 1);
+            const start_time = now() + delay;
+            const end_time = start_time + duration;
+            if (task)
+                task.abort();
+            running = true;
+            add_render_callback(() => dispatch(node, true, 'start'));
+            task = loop(now => {
+                if (running) {
+                    if (now >= end_time) {
+                        tick(1, 0);
+                        dispatch(node, true, 'end');
+                        cleanup();
+                        return running = false;
+                    }
+                    if (now >= start_time) {
+                        const t = easing((now - start_time) / duration);
+                        tick(t, 1 - t);
+                    }
+                }
+                return running;
+            });
+        }
+        let started = false;
+        return {
+            start() {
+                if (started)
+                    return;
+                started = true;
+                delete_rule(node);
+                if (is_function(config)) {
+                    config = config(options);
+                    wait().then(go);
+                }
+                else {
+                    go();
+                }
+            },
+            invalidate() {
+                started = false;
+            },
+            end() {
+                if (running) {
+                    cleanup();
+                    running = false;
+                }
+            }
+        };
+    }
+    function create_out_transition(node, fn, params) {
+        const options = { direction: 'out' };
+        let config = fn(node, params, options);
+        let running = true;
+        let animation_name;
+        const group = outros;
+        group.r += 1;
+        function go() {
+            const { delay = 0, duration = 300, easing = identity, tick = noop, css } = config || null_transition;
+            if (css)
+                animation_name = create_rule(node, 1, 0, duration, delay, easing, css);
+            const start_time = now() + delay;
+            const end_time = start_time + duration;
+            add_render_callback(() => dispatch(node, false, 'start'));
+            loop(now => {
+                if (running) {
+                    if (now >= end_time) {
+                        tick(0, 1);
+                        dispatch(node, false, 'end');
+                        if (!--group.r) {
+                            // this will result in `end()` being called,
+                            // so we don't need to clean up here
+                            run_all(group.c);
+                        }
+                        return false;
+                    }
+                    if (now >= start_time) {
+                        const t = easing((now - start_time) / duration);
+                        tick(1 - t, t);
+                    }
+                }
+                return running;
+            });
+        }
+        if (is_function(config)) {
+            wait().then(() => {
+                // @ts-ignore
+                config = config(options);
+                go();
+            });
+        }
+        else {
+            go();
+        }
+        return {
+            end(reset) {
+                if (reset && config.tick) {
+                    config.tick(1, 0);
+                }
+                if (running) {
+                    if (animation_name)
+                        delete_rule(node, animation_name);
+                    running = false;
+                }
+            }
+        };
+    }
     function create_bidirectional_transition(node, fn, params, intro) {
         const options = { direction: 'both' };
         let config = fn(node, params, options);
@@ -480,6 +664,15 @@ var app = (function () {
     function destroy_block(block, lookup) {
         block.d(1);
         lookup.delete(block.key);
+    }
+    function outro_and_destroy_block(block, lookup) {
+        transition_out(block, 1, 1, () => {
+            lookup.delete(block.key);
+        });
+    }
+    function fix_and_outro_and_destroy_block(block, lookup) {
+        block.f();
+        outro_and_destroy_block(block, lookup);
     }
     function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block, next, get_context) {
         let o = old_blocks.length;
@@ -1346,6 +1539,27 @@ var app = (function () {
         };
     }
 
+    function flip(node, { from, to }, params = {}) {
+        const style = getComputedStyle(node);
+        const transform = style.transform === 'none' ? '' : style.transform;
+        const [ox, oy] = style.transformOrigin.split(' ').map(parseFloat);
+        const dx = (from.left + from.width * ox / to.width) - (to.left + ox);
+        const dy = (from.top + from.height * oy / to.height) - (to.top + oy);
+        const { delay = 0, duration = (d) => Math.sqrt(d) * 120, easing = cubicOut } = params;
+        return {
+            delay,
+            duration: is_function(duration) ? duration(Math.sqrt(dx * dx + dy * dy)) : duration,
+            easing,
+            css: (t, u) => {
+                const x = u * dx;
+                const y = u * dy;
+                const sx = t + u * from.width / to.width;
+                const sy = t + u * from.height / to.height;
+                return `transform: ${transform} translate(${x}px, ${y}px) scale(${sx}, ${sy});`;
+            }
+        };
+    }
+
     /* src\App.svelte generated by Svelte v3.55.0 */
 
     const { console: console_1 } = globals;
@@ -1357,17 +1571,18 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (46:0) {#if showParagraph}
+    // (47:0) {#if showParagraph}
     function create_if_block_1(ctx) {
     	let p;
-    	let p_transition;
+    	let p_intro;
+    	let p_outro;
     	let current;
 
     	const block = {
     		c: function create() {
     			p = element("p");
     			p.textContent = "Can you see me?";
-    			add_location(p, file, 46, 4, 1011);
+    			add_location(p, file, 47, 4, 1054);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -1377,20 +1592,21 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!p_transition) p_transition = create_bidirectional_transition(p, fly, { x: 300 }, true);
-    				p_transition.run(1);
+    				if (p_outro) p_outro.end(1);
+    				p_intro = create_in_transition(p, fade, {});
+    				p_intro.start();
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!p_transition) p_transition = create_bidirectional_transition(p, fly, { x: 300 }, false);
-    			p_transition.run(0);
+    			if (p_intro) p_intro.invalidate();
+    			p_outro = create_out_transition(p, fly, { x: 300 });
     			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(p);
-    			if (detaching && p_transition) p_transition.end();
+    			if (detaching && p_outro) p_outro.end();
     		}
     	};
 
@@ -1398,28 +1614,29 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(46:0) {#if showParagraph}",
+    		source: "(47:0) {#if showParagraph}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (55:0) {#if showParagraph}
+    // (56:0) {#if showParagraph}
     function create_if_block(ctx) {
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
     	let each_1_anchor;
     	let current;
     	let each_value = /*boxes*/ ctx[0];
     	validate_each_argument(each_value);
-    	let each_blocks = [];
+    	const get_key = ctx => /*box*/ ctx[12];
+    	validate_each_keys(ctx, each_value, get_each_context, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    		let child_ctx = get_each_context(ctx, each_value, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
     	}
-
-    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
-    		each_blocks[i] = null;
-    	});
 
     	const block = {
     		c: function create() {
@@ -1441,28 +1658,11 @@ var app = (function () {
     			if (dirty & /*discard, boxes, console*/ 17) {
     				each_value = /*boxes*/ ctx[0];
     				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    						transition_in(each_blocks[i], 1);
-    					} else {
-    						each_blocks[i] = create_each_block(child_ctx);
-    						each_blocks[i].c();
-    						transition_in(each_blocks[i], 1);
-    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-    					}
-    				}
-
     				group_outros();
-
-    				for (i = each_value.length; i < each_blocks.length; i += 1) {
-    					out(i);
-    				}
-
+    				for (let i = 0; i < each_blocks.length; i += 1) each_blocks[i].r();
+    				validate_each_keys(ctx, each_value, get_each_context, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, each_1_anchor.parentNode, fix_and_outro_and_destroy_block, create_each_block, each_1_anchor, get_each_context);
+    				for (let i = 0; i < each_blocks.length; i += 1) each_blocks[i].a();
     				check_outros();
     			}
     		},
@@ -1476,8 +1676,6 @@ var app = (function () {
     			current = true;
     		},
     		o: function outro(local) {
-    			each_blocks = each_blocks.filter(Boolean);
-
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				transition_out(each_blocks[i]);
     			}
@@ -1485,7 +1683,10 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_each(each_blocks, detaching);
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d(detaching);
+    			}
+
     			if (detaching) detach_dev(each_1_anchor);
     		}
     	};
@@ -1494,31 +1695,36 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(55:0) {#if showParagraph}",
+    		source: "(56:0) {#if showParagraph}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (56:4) {#each boxes as box}
-    function create_each_block(ctx) {
+    // (57:4) {#each boxes as box (box)}
+    function create_each_block(key_1, ctx) {
     	let div;
     	let t0_value = /*box*/ ctx[12] + "";
     	let t0;
     	let t1;
     	let div_transition;
+    	let rect;
+    	let stop_animation = noop;
     	let current;
     	let mounted;
     	let dispose;
 
     	const block = {
+    		key: key_1,
+    		first: null,
     		c: function create() {
     			div = element("div");
     			t0 = text(t0_value);
     			t1 = space();
     			attr_dev(div, "class", "svelte-klrgt8");
-    			add_location(div, file, 56, 8, 1209);
+    			add_location(div, file, 57, 8, 1259);
+    			this.first = div;
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -1561,6 +1767,18 @@ var app = (function () {
     			ctx = new_ctx;
     			if ((!current || dirty & /*boxes*/ 1) && t0_value !== (t0_value = /*box*/ ctx[12] + "")) set_data_dev(t0, t0_value);
     		},
+    		r: function measure() {
+    			rect = div.getBoundingClientRect();
+    		},
+    		f: function fix() {
+    			fix_position(div);
+    			stop_animation();
+    			add_transform(div, rect);
+    		},
+    		a: function animate() {
+    			stop_animation();
+    			stop_animation = create_animation(div, rect, flip, { duration: 300 });
+    		},
     		i: function intro(local) {
     			if (current) return;
 
@@ -1593,7 +1811,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(56:4) {#each boxes as box}",
+    		source: "(57:4) {#each boxes as box (box)}",
     		ctx
     	});
 
@@ -1633,11 +1851,11 @@ var app = (function () {
     			t6 = space();
     			if (if_block1) if_block1.c();
     			if_block1_anchor = empty();
-    			add_location(button0, file, 44, 0, 913);
-    			add_location(hr, file, 49, 0, 1067);
+    			add_location(button0, file, 45, 0, 956);
+    			add_location(hr, file, 50, 0, 1111);
     			attr_dev(input, "type", "text");
-    			add_location(input, file, 51, 0, 1075);
-    			add_location(button1, file, 52, 0, 1116);
+    			add_location(input, file, 52, 0, 1119);
+    			add_location(button1, file, 53, 0, 1160);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1770,7 +1988,7 @@ var app = (function () {
     	let showParagraph = false;
 
     	function addBox() {
-    		$$invalidate(0, boxes = [...boxes, boxInput.value]);
+    		$$invalidate(0, boxes = [boxInput.value, ...boxes]);
     	}
 
     	function discard(value) {
@@ -1807,6 +2025,7 @@ var app = (function () {
     		fly,
     		slide,
     		scale,
+    		flip,
     		progress,
     		boxes,
     		boxInput,
