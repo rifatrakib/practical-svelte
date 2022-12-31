@@ -1,7 +1,27 @@
 <script>
+    import { onMount } from "svelte";
+
     let hobbies = [];
     let hobbyInput;
     let isLoading = false;
+
+    onMount(() => {
+        isLoading = true;
+        fetch(
+            "sample url for firebase"
+        ).then(res => {
+            if (!res.ok) {
+                throw new Error("Failed!");
+            }
+            return res.json();
+        }).then(data => {
+            isLoading = false;
+            hobbies = Object.values(data);
+        }).catch(err => {
+            isLoading = false;
+            console.log(err);
+        });
+    });
 
     function addHobby() {
         hobbies = [...hobbies, hobbyInput.value];
