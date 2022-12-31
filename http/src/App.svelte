@@ -23,6 +23,22 @@
         });
     });
 
+    let getHobbies = fetch(
+        "sample url for firebase"
+    ).then(res => {
+        if (!res.ok) {
+            throw new Error("Failed!");
+        }
+        return res.json();
+    }).then(data => {
+        isLoading = false;
+        hobbies = Object.values(data);
+        return hobbies;
+    }).catch(err => {
+        isLoading = false;
+        console.log(err);
+    });
+
     function addHobby() {
         hobbies = [...hobbies, hobbyInput.value];
 
@@ -53,6 +69,7 @@
 <input type="text" id="hobby" bind:this={hobbyInput} />
 <button on:click={addHobby}>Add Hobby</button>
 
+<h2>Using onMount</h2>
 {#if isLoading}
     <p>Loading...</p>
 {:else}
@@ -62,3 +79,16 @@
         {/each}
     </ul>
 {/if}
+
+<h2>Using await</h2>
+{#await getHobbies}
+    <p>Loading...</p>
+{:then hobbyData}
+    <ul>
+        {#each hobbyData as hobby}
+            <li>{hobby}</li>
+        {/each}
+    </ul>
+{:catch error}
+    <p>{error.message}</p>
+{/await}
