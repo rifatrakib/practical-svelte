@@ -4,11 +4,13 @@
     import MeetUpGrid from "./Meetups/MeetUpGrid.svelte";
     import EditMeetUp from "./Meetups/EditMeetUp.svelte";
     import MeetUpDetail from "./Meetups/MeetUpDetail.svelte";
+    import LoadingSpinner from "./Components/LoadingSpinner.svelte";
 
     let editMode;
     let editedId;
     let page = "overview";
     let pageData = {};
+    let isLoading = true;
 
     fetch(
         "firebase url",
@@ -22,8 +24,12 @@
         for (const key in data) {
             loadedMeetups.push({...data[key], id: key});
         }
-        meetups.setMeetups(loadedMeetups);
+        setTimeout(() => {
+            isLoading = false;
+            meetups.setMeetups(loadedMeetups);
+        }, 1000);
     }).catch(err => {
+        isLoading = false;
         console.log(err);
     });
 
@@ -66,11 +72,15 @@
         {#if editMode === "edit"}
             <EditMeetUp id={editedId} on:save="{savedMeetUp}" on:cancel="{cancelEdit}" />
         {/if}
-        <MeetUpGrid
-            meetUps={$meetups}
-            on:showDetails="{showDetails}"
-            on:edit={startEdit}
-            on:add={() => {editMode="edit"}} />
+        {#if isLoading}
+            <LoadingSpinner />
+        {:else}
+            <MeetUpGrid
+                meetUps={$meetups}
+                on:showDetails="{showDetails}"
+                on:edit={startEdit}
+                on:add={() => {editMode="edit"}} />
+        {/if}
     {:else}
         <MeetUpDetail id="{pageData.id}" on:close="{closeDetail}" />
     {/if}
