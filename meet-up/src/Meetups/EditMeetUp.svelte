@@ -78,7 +78,7 @@
                 },
             ).then(res => {
                 if (!res.ok) {
-                    throw new Error("an error occured, please try again");
+                    throw new Error("an error occurred, please try again");
                 }
                 meetups.updateMeetup(id, meetupData);
             }).catch(err => {
@@ -94,7 +94,7 @@
                 }
             ).then(res => {
                 if (!res.ok) {
-                    throw new Error("error occured, please try again");
+                    throw new Error("error occurred, please try again");
                 }
                 return res.json();
             }).then(data => {
@@ -107,6 +107,18 @@
     }
 
     function deleteMeetup() {
+        fetch(
+            "firebase url",
+            {
+                method: "DELETE",
+            },
+        ).then(res => {
+            if (!res.ok) {
+                throw new Error("an error occurred, please try again");
+            }
+        }).catch(err => {
+            console.log(err);
+        });
         meetups.removeMeetup(id);
         dispatch("save");
     }

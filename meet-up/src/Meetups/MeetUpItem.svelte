@@ -16,7 +16,21 @@
     const dispatch = createEventDispatcher();
 
     function toggleFavorite() {
-        meetups.toggleFavorite(id);
+        fetch(
+            "firebase url",
+            {
+                method: "PATCH",
+                body: JSON.stringify({isFavorite: !isFav}),
+                headers: {"Content-Type": "application/json"},
+            }
+        ).then(res => {
+            if (!res.ok) {
+                throw new Error("an error occurred, please try again");
+            }
+            meetups.toggleFavorite(id);
+        }).catch(err => {
+            console.log(err);
+        });
     }
 </script>
 
