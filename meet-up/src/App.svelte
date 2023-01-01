@@ -10,6 +10,23 @@
     let page = "overview";
     let pageData = {};
 
+    fetch(
+        "firebase url",
+    ).then(res => {
+        if (!res.ok) {
+            throw new Error("fetching meetups failed, please try again later");
+        }
+        return res.json();
+    }).then(data => {
+        const loadedMeetups = [];
+        for (const key in data) {
+            loadedMeetups.push({...data[key], id: key});
+        }
+        meetups.setMeetups(loadedMeetups);
+    }).catch(err => {
+        console.log(err);
+    });
+
     function savedMeetUp(event) {
         editMode = null;
         editedId = null;
