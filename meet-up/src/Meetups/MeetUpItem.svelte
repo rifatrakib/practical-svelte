@@ -3,6 +3,7 @@
     import { createEventDispatcher } from "svelte";
     import Button from "../Components/Button.svelte";
     import Badge from "../Components/Badge.svelte";
+    import LoadingSpinner from "../Components/LoadingSpinner.svelte";
 
     export let id;
     export let title;
@@ -13,9 +14,12 @@
     export let email;
     export let isFav;
 
+    let isLoading = false;
+
     const dispatch = createEventDispatcher();
 
     function toggleFavorite() {
+        isLoading = true;
         fetch(
             "firebase url",
             {
@@ -27,8 +31,10 @@
             if (!res.ok) {
                 throw new Error("an error occurred, please try again");
             }
+            isLoading = false;
             meetups.toggleFavorite(id);
         }).catch(err => {
+            isLoading = false;
             console.log(err);
         });
     }
@@ -125,13 +131,22 @@
             on:click={() => dispatch("edit", id)}>
                 Edit
         </Button>
-        <Button
-            type="button"
-            mode="outline"
-            color="{isFav ? null : 'success'}"
-            on:click={toggleFavorite}>
-                {isFav ? "Unfavorite" : "Favorite"}
-        </Button>
+        {#if isLoading}
+            <Button
+                type="button"
+                mode="outline"
+                color="{isFav ? null : 'success'}">
+                    Favoriting...
+            </Button>
+        {:else}
+            <Button
+                type="button"
+                mode="outline"
+                color="{isFav ? null : 'success'}"
+                on:click={toggleFavorite}>
+                    {isFav ? "Unfavorite" : "Favorite"}
+            </Button>
+        {/if}
         <Button type="button" on:click={() => dispatch("showDetails", id)}>
             Show Details
         </Button>

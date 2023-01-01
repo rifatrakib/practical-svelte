@@ -5,12 +5,14 @@
     import EditMeetUp from "./Meetups/EditMeetUp.svelte";
     import MeetUpDetail from "./Meetups/MeetUpDetail.svelte";
     import LoadingSpinner from "./Components/LoadingSpinner.svelte";
+    import Error from "./Components/Error.svelte";
 
     let editMode;
     let editedId;
     let page = "overview";
     let pageData = {};
     let isLoading = true;
+    let error;
 
     fetch(
         "firebase url",
@@ -29,6 +31,7 @@
             meetups.setMeetups(loadedMeetups.reverse());
         }, 1000);
     }).catch(err => {
+        error = err;
         isLoading = false;
         console.log(err);
     });
@@ -57,6 +60,10 @@
         editMode = "edit";
         editedId = event.detail;
     }
+
+    function clearError() {
+        error = null;
+    }
 </script>
 
 <style>
@@ -64,6 +71,10 @@
         margin-top: 5rem;
     }
 </style>
+
+{#if error}
+    <Error message={error.message} on:cancel={clearError} />
+{/if}
 
 <Header />
 
